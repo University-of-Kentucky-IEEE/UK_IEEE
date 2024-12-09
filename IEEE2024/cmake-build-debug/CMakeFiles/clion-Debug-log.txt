@@ -1,0 +1,13 @@
+"/Applications/-Coding Apps-/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=/Applications/-Coding Apps-/CLion.app/Contents/bin/ninja/mac/aarch64/ninja" -G Ninja -S /Users/nathanjones/Downloads/IEEE2024 -B /Users/nathanjones/Downloads/IEEE2024/cmake-build-debug
+-- Configuring done (0.0s)
+CMake Error at CMakeLists.txt:8 (add_executable):
+  Cannot find source file:
+
+    Functions.ino
+
+
+CMake Error at CMakeLists.txt:8 (add_executable):
+  No SOURCES given to target: IEEE2024
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.
