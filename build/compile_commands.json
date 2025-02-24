@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/Users/nathanjones/Documents/GitHub/IEEE2025/IEEE2025/build",
+  "command": "/usr/bin/clang++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/IEEE2025.dir/main.cpp.o -c /Users/nathanjones/Documents/GitHub/IEEE2025/IEEE2025/main.cpp",
+  "file": "/Users/nathanjones/Documents/GitHub/IEEE2025/IEEE2025/main.cpp",
+  "output": "CMakeFiles/IEEE2025.dir/main.cpp.o"
+}
+]
