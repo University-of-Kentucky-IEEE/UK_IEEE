@@ -7,11 +7,11 @@ int delayTime = 100;
 
 // the pin connected to the latch pin, RCLK (pin 12 of the shift register)
 //    setting the latch LOW will send the 8 bits in storage to the output pins
-int latchPin = 5;
+int latchPin = 25;
 // the pin connected to the clock pin, SRCLK (pin 11 of the shift register)
-int clockPin = 6;
+int clockPin = 26;
 // the pin connected to the serial data pin, SER (pin 14 of the shift register)
-int dataPin = 4;
+int dataPin = 24;
 
 
 // This code runs once when the program starts, and no more
