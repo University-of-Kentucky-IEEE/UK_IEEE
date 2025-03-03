@@ -3,7 +3,7 @@
 #define NUM_LEDS     8
 
 // duration to pause
-int delayTime = 100;
+int delayTime = 1000;
 
 // the pin connected to the latch pin, RCLK (pin 12 of the shift register)
 //    setting the latch LOW will send the 8 bits in storage to the output pins
@@ -37,42 +37,34 @@ void updateShiftRegister(byte storageByte)
   digitalWrite(latchPin, HIGH);
 }
 
-// The code in here will run continuously until we turn off the Arduino Dock
 void loop()
 {
-  // the byte (8 bits) to be stored in the shift register
-  //    initialize to 00000001, representing the first LED on
-  byte storageByte = 0x01;
-
-  // create the effect of having the light travel to the left
-  for (int i = 0; i < NUM_LEDS-1; i++)
+  // Start with all LEDs off
+  byte storageByte = 0x00;
+  // Keep track of which LED to turn on
+  byte newLED = 0x01;
+  
+  // Loop through all LEDs
+  for (int i = 0; i < NUM_LEDS; i++)
   {
-    // send the 8 bits to the shift register and set latch LOW
+    // Add the new LED to the pattern using OR operation
+    storageByte = storageByte | newLED;
+    
+    // Update the display
     updateShiftRegister(storageByte);
-
-    // bitwise shift to the left by 1 bit
-    //    the MSB will disappear and a 0 will be shifted in for the LSB
-    //  ex. 10000001 to 00000010
-    storageByte = storageByte << 1;
-
-    // wait before moving on to the next LED to enhance the animation
-    delay(delayTime);   
+    
+    // Shift to prepare for next LED
+    newLED = newLED << 1;
+    
+    // Wait before turning on next LED
+    delay(delayTime);
   }
-
-  // create the effect of having the light travel in the opposite direction
-  for (int i = 0; i < NUM_LEDS-1; i++)
-  {
-    // send the 8 bits to the shift register and set latch LOW
+  
+  // Keep the final pattern (all LEDs on)
+  while(true) {
     updateShiftRegister(storageByte);
-
-    // bitwise shift to the right by 1 bit
-    //    the LSB will disappear and a 0 will be shifted in for the MSB
-    //     i.e. 10000000 to 01000000
-    storageByte = storageByte >> 1;
-
-    // wait before moving on to the next LED to enhance the animation
-    delay(delayTime);   
   }
 }
+
 
 //Written by xyz
