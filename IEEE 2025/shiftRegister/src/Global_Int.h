@@ -4,6 +4,7 @@
 #include <Servo.h>
 #include <WString.h>
 #include <pins_arduino.h>
+#include "Adafruit_VL53L0X/src/Adafruit_VL53L0X.h"
 #define TODO 0
 #define TotalSensors 10
 #define TotalServos 13
