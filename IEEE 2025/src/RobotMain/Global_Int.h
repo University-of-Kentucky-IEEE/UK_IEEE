@@ -2,8 +2,9 @@
 #include <Servo.h>
 // #include <Pixy2.h>
 #include <Adafruit_VL53L0X.h>
-#include "MovementFunctions.ino"
-#include "SensorFunctions.ino"
+// #include "MovementFunctions.ino"
+// #include "SensorFunctions.ino"
+// #include "Functions.ino"
 
 //initalize global variables and structures
 #define TODO 0
@@ -183,7 +184,7 @@ SensorData Sensor[TotalSensors];
 #define FR_ID 8          //front right servo
 #define BR_ID 9          //back right servo
 #define FL_ID 10         //front left servo
-#define BL_ID 11         //back left servo
+#define BL_ID 7         //back left servo
 #define PixyCam_ID 12
 
 

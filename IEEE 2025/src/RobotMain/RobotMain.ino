@@ -4,19 +4,19 @@
 
 
 /*I KNOW THIS IS MESSY AND BADLY ORGANIZED. BEAR WITH ME.*/
-
-//tasks to do inside each objective
-int state = 1;
-//objectives to complete
-int objective = -1;
 //define objectives
-#define setup 0
+#define setupTasks 0
 #define sweepOuterField 1
 #define pickUpBoxes 2
 #define dropOffBlocks 3
 #define sweepCave 4
 #define dropOffBlocksFromCave 5
 #define beacon 6
+//tasks to do inside each objective
+int state = 1;
+//objectives to complete (change this to setupTasks later)
+int objective = sweepOuterField;
+
 //I AM ASSUMING SWEEPER IS ALWAYS FRONT, ALL SENSOR DIRECTIONS RELATIVE TO SWEEPER
 //        front (sweeper)
         //   @@@@@@@@
@@ -27,7 +27,9 @@ int objective = -1;
         //     back
 
 //figure out the distance away from wall to safely rotate without hitting it
-#define safeDistanceAway 1
+#define safeDistanceAway 25
+//figure out the factor which converts angle degrees to delay time while rotating
+#define delayScalingFactor 22.388
 
 bool isSafeDistanceAway(int sensor){
     if(Sensor[sensor].Distance < safeDistanceAway){
@@ -37,11 +39,12 @@ bool isSafeDistanceAway(int sensor){
 }
 
 // I know this should go into its own ino file eventually
+bool inPosition = false;
 bool LocationHelper(int state){
     switch(state){
         //should be in the pad 0 corner, sweeper facing a wall
         case 1:
-            bool inPosition = false;
+            inPosition = false;
             MoveForward();
             Read_Multi_Sensors();
             //are front sensors hitting wall?
@@ -54,14 +57,14 @@ bool LocationHelper(int state){
             //if yes, do the safe rotation adjustment and rotate
             if(inPosition){
                 Stop();
-                SafeRotate('CW', 90);
+                SafeRotate("CW", 90);
                 return true;
             }
             return false;
             //if no, return false (not in position yet)
             break;
         case 2:
-            bool inPosition = false;
+            inPosition = false;
             MoveForward();
             Read_Multi_Sensors();
             //are front sensors hitting wall?
@@ -74,7 +77,7 @@ bool LocationHelper(int state){
             //if yes, do the safe rotation adjustment and rotate
             if(inPosition){
                 Stop();
-                SafeRotate('CW', 90);
+                SafeRotate("CW", 90);
                 return true;
             }
             return false;
@@ -126,7 +129,7 @@ bool LocationHelper(int state){
 void SafeRotate(String direction, int angle){
     //if front sensors in range, move backwards until safe distance away
     if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
-        MoveBackwards();
+        MoveBackward();
         while(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
             read_multi_sensors(); //how resource intensive is this? will re-reading take too long?
         }
@@ -150,41 +153,89 @@ void SafeRotate(String direction, int angle){
     }
     //if back sensors in range, move forward until safe distance away
     if(!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)){
-        MoveForwards();
+        MoveForward();
         while(!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)){
             read_multi_sensors(); //how resource intensive is this? will re-reading take too long?
         }
         Stop();
     }
-    if(direction == 'CW'){
+
+    angle = delayScalingFactor * angle;
+
+    if(direction == "CW"){
         //rotate CW for x degrees
         RotateCW();
         //figure out how to convert time delay to equivalent rotation angle
-        Delay(angle)
+        delay(angle);
+        Stop();
     }
     else{
         //rotate CCW for x degrees
-        RotateCWW();
+        RotateCCW();
         //figure out how to convert time delay to equivalent rotation angle
-        Delay(angle)
+        delay(angle);
+        Stop();
     }
 }
+//Have no idea if any of this is still necessary
+void setup() {
+Serial.begin(115200);
+BaseServo.attach(11);
 
+
+// wait until serial port opens for native USB devices
+while (!Serial) { delay(1); }
+SetupSensors();
+
+
+Serial.println(F("Starting robot..."));
+//may be necessary to bring this back once the grabbing arm is installed
+//SetupServos();
+BL.attach(FL_ID);
+FL.attach(BL_ID);
+BR.attach(BR_ID);
+FR.attach(FR_ID);
+}
+
+bool hasMovementStarted = true;
+void tempMovementFn(){
+    hasMovementStarted = false;
+    MoveForward();
+    delay(2000);
+    Stop();
+    MoveRight();
+    delay(2000);
+    Stop();
+    MoveLeft();
+    delay(2000);
+    Stop();
+    MoveBackward();
+    delay(2000);
+    Stop();
+    RotateCW();
+    delay(2000);
+}
 void loop(){
-    while(objective == setup){
+    while(objective == setupTasks){
         //do LED stuff
         //when done, set objective to setup
     }
     while(objective == sweepOuterField){
         //state = 1;
         //if state is done executing, move to the next one
-        if(state != 3 && LocationHelper(state)){
-            state++;
-        }
-        //end prematurely (Honestly dont think I'll even get this far)
-        if(state == 3){
-            Stop();
-            return;
+        //NO SENSORS RN -- UNCOMMENT FOLLOWING LINES WHEN THERE ARE SENSORS
+        // if(state != 3 && LocationHelper(state)){
+        //     state++;
+        // }
+        // //end prematurely (Honestly dont think I'll even get this far)
+        // if(state == 3){
+        //     Stop();
+        //     return;
+        // }
+        
+        if(hasMovementStarted){
+            tempMovementFn();
+            
         }
     }
     while(objective == pickUpBoxes){

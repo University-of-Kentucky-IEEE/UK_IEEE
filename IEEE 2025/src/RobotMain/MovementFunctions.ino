@@ -1,3 +1,4 @@
+#pragma once
 #include "Global_Int.h"
 //
 //
@@ -6,51 +7,86 @@
 //
 
 void RotateCW() {
-  FL.writeMicroseconds(MaxPulse);
-  BL.writeMicroseconds(MaxPulse);
+  // FL.writeMicroseconds(MaxPulse);
+  // BL.writeMicroseconds(MaxPulse);
 
-  FR.writeMicroseconds(MaxPulse);
-  BR.writeMicroseconds(MaxPulse);
+  // FR.writeMicroseconds(MaxPulse);
+  // BR.writeMicroseconds(MaxPulse);
+    FL.writeMicroseconds(MaxPulse);
+BL.writeMicroseconds(MaxPulse);
+
+FR.writeMicroseconds(MaxPulse);
+BR.writeMicroseconds(MaxPulse);
 }
 
 void RotateCCW() {
-  FL.writeMicroseconds(MinPulse);
-  BL.writeMicroseconds(MinPulse);
+  // FL.writeMicroseconds(MinPulse);
+  // BL.writeMicroseconds(MinPulse);
 
+  // FR.writeMicroseconds(MinPulse);
+  // BR.writeMicroseconds(MinPulse);
+    FL.writeMicroseconds(MinPulse);
+  BL.writeMicroseconds(MinPulse);
+  
   FR.writeMicroseconds(MinPulse);
   BR.writeMicroseconds(MinPulse);
 }
 
 void MoveForward() {
-  FL.writeMicroseconds(MinPulse);
-  BL.writeMicroseconds(MaxPulse);
+  // FL.writeMicroseconds(MinPulse);
+  // BL.writeMicroseconds(MaxPulse);
 
-  FR.writeMicroseconds(MaxPulse);
-  BR.writeMicroseconds(MinPulse);
+  // FR.writeMicroseconds(MaxPulse);
+  // BR.writeMicroseconds(MinPulse);
+  FL.writeMicroseconds(MaxPulse);
+BL.writeMicroseconds(MaxPulse);
+
+FR.writeMicroseconds(MinPulse);
+BR.writeMicroseconds(MinPulse);
 }
 
 void MoveRight() {
- FL.writeMicroseconds(MaxPulse);
- BL.writeMicroseconds(MinPulse);
+//   FL.writeMicroseconds(MaxPulse);
+//  BL.writeMicroseconds(MaxPulse);
 
-  FR.writeMicroseconds(MaxPulse);
-  BR.writeMicroseconds(MinPulse);
+//   FR.writeMicroseconds(MaxPulse);
+//   BR.writeMicroseconds(MaxPulse);
+FL.writeMicroseconds(MinPulse);
+BL.writeMicroseconds(MaxPulse);
+
+FR.writeMicroseconds(MaxPulse);
+BR.writeMicroseconds(MinPulse);
 }
 
 void MoveLeft() {
-  FL.writeMicroseconds(MinPulse);
-  BL.writeMicroseconds(MaxPulse);
+  // FL.writeMicroseconds(MinPulse);
+  // BL.writeMicroseconds(MaxPulse);
+
+  // FR.writeMicroseconds(MinPulse);
+  // BR.writeMicroseconds(MaxPulse);
+  FL.writeMicroseconds(MaxPulse);
+  BL.writeMicroseconds(MinPulse);
 
   FR.writeMicroseconds(MinPulse);
   BR.writeMicroseconds(MaxPulse);
 }
 
 void MoveBackward() {
-  FL.writeMicroseconds(MaxPulse);
-  BL.writeMicroseconds(MinPulse);
+    FL.writeMicroseconds(MinPulse);
+BL.writeMicroseconds(MinPulse);
 
-  FR.writeMicroseconds(MinPulse);
-  BR.writeMicroseconds(MaxPulse);
+FR.writeMicroseconds(MaxPulse);
+BR.writeMicroseconds(MaxPulse);
+  // FL.writeMicroseconds(MaxPulse);
+  // BL.writeMicroseconds(MinPulse);
+
+  // FR.writeMicroseconds(MinPulse);
+  // BR.writeMicroseconds(MaxPulse);
+  // FL.writeMicroseconds(MinPulse);
+  // BL.writeMicroseconds(MinPulse);
+  
+  // FR.writeMicroseconds(MinPulse);
+  // BR.writeMicroseconds(MinPulse);
 }
 
 void Stop() {
