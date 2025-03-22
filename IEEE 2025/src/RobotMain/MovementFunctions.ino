@@ -58,6 +58,31 @@ FR.writeMicroseconds(MaxPulse);
 BR.writeMicroseconds(MinPulse);
 }
 
+
+void SlowMoveLeft() {
+  FL.writeMicroseconds(1250);
+  BL.writeMicroseconds(1750);
+
+  FR.writeMicroseconds(1250);
+  BR.writeMicroseconds(1750);
+}
+
+void SlowMoveRight() {
+  FL.writeMicroseconds(1750);
+  BL.writeMicroseconds(1250);
+
+  FR.writeMicroseconds(1750);
+  BR.writeMicroseconds(1250);
+}
+
+void SlowMoveBackward() {
+  FL.writeMicroseconds(1250);
+  BL.writeMicroseconds(1250);
+
+  FR.writeMicroseconds(1750);
+  BR.writeMicroseconds(1750);
+}
+
 void MoveLeft() {
   // FL.writeMicroseconds(MinPulse);
   // BL.writeMicroseconds(MaxPulse);
