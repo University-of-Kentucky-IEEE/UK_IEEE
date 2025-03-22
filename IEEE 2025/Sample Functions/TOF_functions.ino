@@ -30,12 +30,11 @@
 #define Front_Left 1
 #define Left_Front 2
 #define Left_Back 3
-#define Right_Front 4
-#define Right_Back 5
-#define Back_Right 6
-#define Back_Left 7
-#define Under_Front 8
-#define Under_Back 9
+#define Back_Right 4
+#define Back_Left 5
+#define Right_Front 6
+#define Right_Back 7
+
 
 // objects for the vl53l0x
 Adafruit_VL53L0X lox1 = Adafruit_VL53L0X();
@@ -207,7 +206,10 @@ void read_single_sensor(int SensorPointer) {
       if (measure1.RangeStatus != 4) {                           // if not out of range
         Sensor[Front_Left].Distance = measure1.RangeMilliMeter;  //Front Left
       }else {
-        Sensor[Front_Left].Distance = 0;
+        Sensor[Front_Left].Distance = 1000;
+      }
+      if (Sensor[Front_Left].Distance > 1000){ // sets limit of 1000 mm
+        Sensor[Front_Left].Distance = 1000;
       }
       break;
 
@@ -218,6 +220,9 @@ void read_single_sensor(int SensorPointer) {
       }else {
         Sensor[Left_Front].Distance = 0;
       }
+      if (Sensor[Left_Front].Distance > 1000){ // sets limit of 1000 mm
+        Sensor[Left_Front].Distance = 1000;
+      }
       break;
 
     case 2:
@@ -227,6 +232,10 @@ void read_single_sensor(int SensorPointer) {
       }else {
         Sensor[Left_Back].Distance = 0;
       }
+      if (Sensor[Left_Back].Distance > 1000){ // sets limit of 1000 mm
+        Sensor[Left_Back].Distance = 1000;
+      }
+      
       break;
 
     case 3:
@@ -235,6 +244,9 @@ void read_single_sensor(int SensorPointer) {
         Sensor[Back_Left].Distance = measure4.RangeMilliMeter;  //Back Left
       } else {
         Sensor[Back_Left].Distance = 0;
+      }
+      if (Sensor[Back_Left].Distance > 1000){ // sets limit of 1000 mm
+        Sensor[Back_Left].Distance = 1000;
       }
       break;
 
@@ -245,6 +257,9 @@ void read_single_sensor(int SensorPointer) {
       }else {
         Sensor[Right_Front].Distance = 0;
       }
+      if (Sensor[Right_Front].Distance > 1000){ // sets limit of 1000 mm
+        Sensor[Right_Front].Distance = 1000;
+      }
       break;
 
     case 5:
@@ -253,6 +268,9 @@ void read_single_sensor(int SensorPointer) {
         Sensor[Front_Right].Distance = measure6.RangeMilliMeter;  //Front Right
       }else {
         Sensor[Front_Right].Distance = 0;
+      }
+      if (Sensor[Front_Right].Distance > 1000){ // sets limit of 1000 mm
+        Sensor[Front_Right].Distance = 1000;
       }
       break;
 
@@ -263,6 +281,9 @@ void read_single_sensor(int SensorPointer) {
       } else {
         Sensor[Back_Right].Distance = 0;
       }
+      if (Sensor[Back_Right].Distance > 1000){ // sets limit of 1000 mm
+        Sensor[Back_Right].Distance = 1000;
+      }
       break;
 
     case 7:
@@ -271,6 +292,9 @@ void read_single_sensor(int SensorPointer) {
         Sensor[Right_Back].Distance = measure8.RangeMilliMeter;  //Right Back
       }else {
         Sensor[Right_Back].Distance = 0;
+      }
+      if (Sensor[Right_Back].Distance > 1000){ // sets limit of 1000 mm
+        Sensor[Right_Back].Distance = 1000;
       }
       break;
   }

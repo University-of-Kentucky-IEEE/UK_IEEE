@@ -140,9 +140,43 @@ int CheckShippingContainerPosition(){ //checks where shipping container is locat
     }
 }
 
-void DepositGeodes(bool magnetic){
-    if (magnetic) {                 //deposit on magnetic Side (Right)
-        
+void DepositGeodes(bool magnetic){      //ONLY USE IF WE KNOW WHERE SHIPPING CONTAINER IS
+    float DepositStartTime = millis(); //Safety Excape incase of inf loop
+    bool Deposited = false;
+    while (!Deposited){                 //loop until geodes are deposited 
+        int CurrentContainerPosition = CheckShippingContainerPosition();
+        if (CurrentContainerPosition = ContainerOnRightSide) {                //If Container is on Right Side of Robot
+            if (magnetic){
+                Stop();
+                MagneticStorageContainer(true); // Open Magnetic Container
+                delay(5000);                    // wait for geodes to fall
+                MagneticStorageContainer(false);
+                Deposited = true;
+            } else {
+                MoveLeft();                     
+            }
+        } else if (CurrentContainerPosition = ContainerOnLeftSide) {                //If Container is on left Side of Robot
+            if (magnetic){
+                MoveRight();
+            } else {
+                Stop();
+                NonMagneticStorageContainer(true); // Open Magnetic Container
+                delay(5000);                    // wait for geodes to fall
+                NonMagneticStorageContainer(false); // Close NonMagnetic Container
+                Deposited = true;                 
+            }
+        } else if (CurrentContainerPosition = ContainerInMiddle) {                //If Container is in middle of Robot
+            if (magnetic){
+                MoveRight();
+            } else {
+                MoveLeft();                
+            }
+        } else {                //LOOK HERE IN CASE OF "SKIPPING" OVER THIS FUNCTION 
+            Deposited = true; //FAILED TO FIND SHIPPING CONTAINER BREAK OUT 
+        }
+        if ((millis()-DepositStartTime) > 15){ // Time limit exceeded DO NOT RELEASE CONTAINER 
+            Deposited = true;
+        }
     }
 }
 
@@ -156,3 +190,68 @@ typedef struct { //current Known coordinates for shipping container
     
   } ShippingContainerInformation;
   ShippingContainerInformation ShippingContainer[2];
+
+  //
+  //Direction
+  //
+
+  #define North 0
+  #define East 1
+  #define South 2
+  #define West 3
+ 
+  #define CW 1
+  #define CCW -1
+
+  int Direction = East; //Starting Direction
+  int ClosestWall = South;
+
+  void ChangeDirection(int rotation){  //Changes global direction when we rotate, CW is positive direction
+    Direction = Direction + rotation;
+    Direction = OutputDirection(Direction);
+  }
+
+  void OutputDirection(int tempDirection){ //Contrains direction to 0-3
+    while (tempDirection > 3 || tempDirection < 0){
+        if (tempDirection < North){
+            tempDirection += 4;
+        }
+        if (tempDirection > 3){
+            tempDirection -= 4;
+        }
+    }
+    return tempDirection;
+  }
+  
+  
+  int GetClosestWall(){ //gets closest wall direction 
+    Read_Multi_Sensors();
+    int FrontAverage = (Sensor[Front_Left].Distance + Sensor[Front_Right].Distance); //North on robot 0
+    int RightAverage = (Sensor[Right_Front].Distance + Sensor[Right_Back].Distance); // East on robot 1
+    int BackAverage = (Sensor[Back_Left].Distance + Sensor[Back_Right].Distance);    //South on robot 2
+    int LeftAverage = (Sensor[Left_Front].Distance + Sensor[Left_Back].Distance);    //West  on robot 3
+    
+    int Averages = [FrontAverage, RightAverage, BackAverage, LeftAverage];
+
+    int CloestDirection = North;  //According to robot 
+
+    for (int i = 0; i < 4; i ++){                       //gets side of the robot with the closest side
+        if (Averages[i] <= Averages[CloestDirection]){
+            CloestDirection = i;
+        }
+    }
+    CloestDirection = OutputDirection(CloestDirection + Direction);
+    return CloestDirection;
+  }
+  
+
+  void SafeRotateCW(){
+    bool InPosition = false; 
+    while (!InPosition){
+        RotateCW();
+        read_single_sensor(Direction + 2)
+    }
+    ChangeDirection(CW);
+  }
+
+
