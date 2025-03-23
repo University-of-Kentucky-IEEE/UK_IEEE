@@ -1,4 +1,4 @@
-
+#include "RobotMain.ino"
 
 
 //ServoNames
@@ -87,6 +87,20 @@ void MoveBrush(bool InPosition) {
 }
 
 
+void EnableSortingSystem(bool Status){
+  if (Status){          //enable Sorting System (ConveyorBelt, Brush, Brush Position, and spiral)
+    MoveBrush(true); 
+    ConveyorBelt.writeMicroseconds(1750);
+    Spiral.writeMicroseconds(1750);
+
+  } else {
+    MoveBrush(false); 
+    ConveyorBelt.writeMicroseconds(1500);
+    Spiral.writeMicroseconds(1500);
+  }
+}
+
+
 
 
 //
@@ -132,8 +146,7 @@ void CheckForMagnet() {  //Checks for Magnetic Field
 
 int CheckShippingContainerPosition() {  //checks where shipping container is located
   Read_Multi_Sensors();
-  // read_single_sensor(Back_Right);
-  // read_single_sensor(Back_Left);
+
   Serial.print("Back Right ");
   Serial.println(Sensor[Back_Right].Distance);
   Serial.print("Back Left ");
@@ -166,41 +179,43 @@ void DepositGeodes(bool magnetic) {   //ONLY USE IF WE KNOW WHERE SHIPPING CONTA
   
     if (CurrentContainerPosition == ContainerOnRightSide) {  //If Container is on Right Side of Robot
       if (magnetic) {
-        SlowMoveBackward();
+        MoveBackward(.25);
         delay(500);
         Stop();
         MagneticStorageContainer(true);  // Open Magnetic Container
         Serial.println("Depositing Magnetic Geodes ");
-        delay(5000);  // wait for geodes to fall
+        Shake();
+        //delay(5000);  // wait for geodes to fall
         MagneticStorageContainer(false);
         Deposited = true;
       } else {
         CurrentContainerPosition = CheckShippingContainerPosition();
         Serial.println("Moving Right ");
-        SlowMoveRight();
+        MoveRight(.25);
       }
     } else if (CurrentContainerPosition == ContainerOnLeftSide) {  //If Container is on left Side of Robot
       if (magnetic) {
         CurrentContainerPosition = CheckShippingContainerPosition();
         Serial.println("Moving Left ");
-        SlowMoveLeft();
+        MoveLeft(.25);
       } else {
-        SlowMoveBackward();
+        MoveBackward(.25);
         delay(500);
         Stop();
         NonMagneticStorageContainer(true);  // Open Magnetic Container
         Serial.println("Depositing NonMagnetic Geodes ");
-        delay(5000);                         // wait for geodes to fall
+        Shake();
+        //delay(5000);                         // wait for geodes to fall
         NonMagneticStorageContainer(false);  // Close NonMagnetic Container
         Deposited = true;
       }
     } else if (CurrentContainerPosition == ContainerInMiddle) {  //If Container is in middle of Robot
       if (magnetic) {
         Serial.println("Moving Left ");
-        SlowMoveLeft();
+        MoveLeft(.25);
       } else {
         Serial.println("Moving Right ");
-        SlowMoveRight();
+        MoveRight(.25);
       }
     } else {             //LOOK HERE IN CASE OF "SKIPPING" OVER THIS FUNCTION
       Deposited = true;  //FAILED TO FIND SHIPPING CONTAINER BREAK OUt
@@ -212,6 +227,18 @@ void DepositGeodes(bool magnetic) {   //ONLY USE IF WE KNOW WHERE SHIPPING CONTA
   }
 }
 
+
+void Shake(){       //Shake the Geodes out
+  for(int i = 0; i < 25; i++){
+    MoveForward(0.25);
+    delay(100);
+    MoveBackward(0.25);
+    delay(100);
+  }
+  Stop();
+}
+
+
 //Shipping Container information
 #define Magnetic 1
 #define NonMagnetic 0
@@ -222,6 +249,8 @@ typedef struct {  //current Known coordinates for shipping container
 
 } ShippingContainerInformation;
 ShippingContainerInformation ShippingContainer[2];
+
+
 
 //
 //Direction
@@ -276,6 +305,10 @@ int GetClosestWall() {  //gets closest wall direction
   return ClosestDirection;
 }
 
+int ReadClosestWall(int ClosestDirection){
+  
+}
+
 
 void CheckForTurn(int rotation) {
   bool InPosition = false;
@@ -287,6 +320,7 @@ void CheckForTurn(int rotation) {
     case CCW:
       RotateCCW();
   }
+
   while (!InPosition) {
     RotateCW();
     read_single_sensor(Direction + 2);
@@ -295,8 +329,9 @@ void CheckForTurn(int rotation) {
   ChangeDirection(CW);
 }
 
-/*
+
 void CheckForWallCollisions(){
+  Read_Multi_Sensors();
     if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
         MoveBackward();
         while(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
@@ -333,4 +368,3 @@ void CheckForWallCollisions(){
         Stop();
     }
 }
-*/
