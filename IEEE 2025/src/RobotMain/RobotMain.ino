@@ -27,7 +27,7 @@ int objective = sweepOuterField;
         //     back
 
 //figure out the distance away from wall to safely rotate without hitting it
-#define safeDistanceAway 25
+#define safeDistanceAway 50
 //figure out the factor which converts angle degrees to delay time while rotating
 #define delayScalingFactor 22.388
 
@@ -127,6 +127,9 @@ bool LocationHelper(int state){
 
 //TODO: set up sensor reading code to always assign 9999 to distance if out of range
 void SafeRotate(String direction, int angle){
+    CheckForWallCollisions();
+    
+    /*
     //if front sensors in range, move backwards until safe distance away
     if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
         MoveBackward();
@@ -159,6 +162,7 @@ void SafeRotate(String direction, int angle){
         }
         Stop();
     }
+    */
 
     angle = delayScalingFactor * angle;
 
