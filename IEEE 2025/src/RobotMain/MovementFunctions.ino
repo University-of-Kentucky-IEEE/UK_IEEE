@@ -19,6 +19,44 @@ FR.writeMicroseconds(MaxPulse);
 BR.writeMicroseconds(MaxPulse);
 }
 
+// float getDistance(int sensor){
+//   return Sensor[sensor].Distance;
+// }
+
+// void PreciseRotateCW(){
+//   float frontLeftDistance = getDistance(Front_Left);
+//   // do I need to compare both sensors or just one?
+//   // float frontRightDistance = getDistance(Front_Right);
+//   // float rightFrontDistance = getDistance(Right_Front);
+//   float rightBackDistance = getDistance(Right_Back);
+
+//   while(frontLeftDistance != rightBackDistance){
+//     read_multi_sensors();
+//     FL.writeMicroseconds(MaxPulse);
+//     BL.writeMicroseconds(MaxPulse);
+//     FR.writeMicroseconds(MaxPulse);
+//     BR.writeMicroseconds(MaxPulse);
+//   }
+//   Stop();
+
+// }
+// void PreciseRotateCCW(){
+//   float frontLeftDistance = getDistance(Front_Left);
+//   // do I need to compare both sensors or just one?
+//   // float frontRightDistance = getDistance(Front_Right);
+//   // float rightFrontDistance = getDistance(Right_Front);
+//   float rightBackDistance = getDistance(Right_Back);
+
+//   while(rightBackDistance != frontLeftDistance){
+//     read_multi_sensors();
+//     FL.writeMicroseconds(MaxPulse);
+//     BL.writeMicroseconds(MaxPulse);
+//     FR.writeMicroseconds(MaxPulse);
+//     BR.writeMicroseconds(MaxPulse);
+//   }
+//   Stop();
+// }
+
 void RotateCCW() {
   // FL.writeMicroseconds(MinPulse);
   // BL.writeMicroseconds(MinPulse);
@@ -121,7 +159,7 @@ void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
   Serial.println(SideTilt);
 
   if (Direction == "Forward") {
-    if (SideTilt == "CWW") {  //tilting left
+    if (SideTilt == "CCW") {  //tilting left
       FL.writeMicroseconds(MappedSpeed[0]);
       BL.writeMicroseconds(MinPulse);
 
@@ -184,7 +222,7 @@ void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
     }
 
   } else if (Direction == "Right") {
-    if (SideTilt == "CWW") {  //tilting left
+    if (SideTilt == "CCW") {  //tilting left
 
       FL.writeMicroseconds(MappedSpeed[0]);
       BL.writeMicroseconds(MaxPulse);
