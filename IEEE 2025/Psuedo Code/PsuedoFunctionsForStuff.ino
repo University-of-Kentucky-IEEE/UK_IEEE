@@ -9,7 +9,7 @@
 #define NonMagneticStorage_Pin 3
 #define BrushDock_Pin 1
 #define ConveyorBelt_Pin 5
-#define Sprial_Pin 6
+#define Spiral_Pin 6
 #define ShippingGrab_Pin 7
 
 #define pin_FR 10
@@ -31,7 +31,7 @@ void ServoSetup() {
 
   ConveyorBelt.attach(ConveyorBelt_Pin);
 
-  Sprial.attach(Sprial_Pin);
+  Spiral.attach(Spiral_Pin);
 
   ShippingGrab.attach(ShippingGrab_Pin);
 
@@ -301,32 +301,55 @@ int GetClosestWall() {  //gets closest wall direction
       ClosestDirection = i;
     }
   }
-  ClosestDirection = OutputDirection(ClosestDirection + Direction);
+  ClosestDirection = OutputDirection(ClosestDirection - Direction);  // ClosestWall - Direction    
+  
+  //x  = Closest Directoin
+  //  N E S W 
+  //N 0 1 2 3
+  //E 3 0 1 2  
+  //S 2 3 0 1   -> z = side on robot Facing nearest Wall   -> ID for closest Side sensors    Sensor1 = ClosestDirection * 2 and Sensor2 = ClosestDirection * 2 + 1 
+  //W 1 2 3 0
+//y = RobotFacing
   return ClosestDirection;
 }
 
-int ReadClosestWall(int ClosestDirection){
-  
+//   N   E   S   W
+//N 0	1	2	3	4	5	6	7
+//E 6	7	0	1	2	3	4	5       Sensor Pins for each direction (same axis as above)
+//S 4	5	6	7	0	1	2	3
+//W 2 3 4	5	6	7	0	1
+
+int ReadClosestWall(int ClosestDirection){ //Output Side needed to rotate
+  read_single_sensor(ClosestDirection*2);
+  read_single_sensor(ClosestDirection*2 + 1);
+  int DistanceDiffFronWall = Sensor[ClosestDirection*2].Distance - Sensor[ClosestDirection*2 + 1].Distance;
+  return DistanceDiffFronWall;
 }
 
 
 void CheckForTurn(int rotation) {
   bool InPosition = false;
+  int ClosestWall = GetClosestWall();
+  int DistanceDiffFronWall = 0;
   switch (rotation) {
     case CW:
-      RotateCW();
+    ClosestWall = OutputDirection(ClosestWall - 1); //Sensors that will reach the closest wall next
+      RotateCW(0.2);
       break;
 
     case CCW:
-      RotateCCW();
+    ClosestWall = OutputDirection(ClosestWall + 1); //Sensors that will reach the closest wall next
+      RotateCCW(0.2);
   }
 
   while (!InPosition) {
-    RotateCW();
-    read_single_sensor(Direction + 2);
-    read_single_sensor(Direction + 3);
+    DistanceDiffFronWall = abs(ReadClosestWall(ClosestWall));
+    if (DistanceDiffFronWall ){
+      
+    }
   }
-  ChangeDirection(CW);
+
+  ChangeDirection(rotation);
 }
 
 

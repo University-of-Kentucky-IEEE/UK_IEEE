@@ -157,22 +157,22 @@ void Stop() {
 
 void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
   Read_Multi_Sensors();
-  GetClosestWall(); 
-  int MappedSpeed[4];  // 0 min to max, 1 max to min pulse
+  int ClosestWall = GetClosestWall(); 
+  float Power = ReadClosestWall(ClosestWall);
+  string SideTilt;
+
+  if (Power > 0){
+    SideTilt = "CCW";
+  } else {
+    SideTilt = "CW";
+  }
   //Movement Mapping
-  MappedSpeed[0] = map(SideDif, 0, -100, Stall, MinPulse);
-  MappedSpeed[1] = map(SideDif, 0, 100, Stall, MaxPulse);
 
-  //Stationary Mapping
-  MappedSpeed[2] = map(SideDif, 0, 100, Stall, MaxPulse);
-  MappedSpeed[3] = map(SideDif, 0, 100, Stall, MinPulse);
-  Serial.println(MappedSpeed[2]);
-  Serial.println(MappedSpeed[3]);
 
-  Serial.print("Direction = ");
-  Serial.print(Direction);
-  Serial.print(" Now Tilting ");
-  Serial.println(SideTilt);
+    Serial.print("Direction = ");
+    Serial.print(Direction);
+    Serial.print(" Now Tilting ");
+    Serial.println(SideTilt);
 
   if (Direction == "Forward") {
     if (SideTilt == "CCW") {  //tilting left

@@ -28,12 +28,12 @@
 
 #define Front_Right 0
 #define Front_Left 1
-#define Left_Front 2
-#define Left_Back 3
+#define Right_Front 2
+#define Right_Back 3
 #define Back_Right 4
 #define Back_Left 5
-#define Right_Front 6
-#define Right_Back 7
+#define Left_Front 6
+#define Left_Back 7
 
 
 // objects for the vl53l0x
