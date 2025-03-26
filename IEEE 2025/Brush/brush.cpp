@@ -26,15 +26,18 @@ void loop() {
   analogWrite(10, 200); //ENB pin
   //(Optional)
   
-  //digitalWrite(motor1pin1,  HIGH);
-  //digitalWrite(motor1pin2, LOW);
+  //Exhaust
+  digitalWrite(motor1pin1, HIGH);
+  digitalWrite(motor1pin2, LOW);
 
-  //digitalWrite(motor2pin1, HIGH);
-  //digitalWrite(motor2pin2, LOW);
+  digitalWrite(motor2pin1, HIGH);
+  digitalWrite(motor2pin2, LOW);
   delay(3000);
 
-  //digitalWrite(motor1pin1,  LOW);
-  //digitalWrite(motor1pin2, HIGH);
+
+  //Intake
+  digitalWrite(motor1pin1, LOW);
+  digitalWrite(motor1pin2, HIGH);
 
   digitalWrite(motor2pin1, LOW);
   digitalWrite(motor2pin2, HIGH);
