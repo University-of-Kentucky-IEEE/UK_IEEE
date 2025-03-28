@@ -75,15 +75,18 @@ void tempMovementFn(){
 
 
     //brush(true);
-    MoveForward();
+    
     //BrushDock.write(135); //moves brush up so sensors can read
 
-    Read_Multi_Sensors();
+    
     //delay(250);
 
-    if (!isSafeDistanceAway(Front_Left)){
-        Stop();
+    while (isSafeDistanceAway(Front_Left)){
+        Read_Multi_Sensors();
+        MoveForward();
+
     }
+    Stop();
     // else{//put brush back into position
     //     MoveBrush(true);
     // }
