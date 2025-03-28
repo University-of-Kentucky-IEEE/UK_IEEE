@@ -1,7 +1,14 @@
-#include "RobotMain.ino"
+#include <Servo.h>
 
 
 //ServoNames
+Servo GeodeSorter
+Servo MargneticStorage
+Servo NonMagneticStorage
+Servo BrushDock
+Servo ConveyorBelt
+Servo Spiral
+Servo ShippingGrab
 
 //Servo Pins
 #define GeodeSorter_Pin 4

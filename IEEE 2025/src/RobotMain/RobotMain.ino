@@ -1,7 +1,8 @@
-/*DEPENDENCIES FROM LAST YEAR: GLOBALINT.H, MOVEMENTFUNCTIONS.INO, SENSORFUNCTIONS.INO*/
-#pragma once
-#include "Global_Int.h"
+#include "Adafruit_VL53L0X.h"
 
+/*DEPENDENCIES FROM LAST YEAR: GLOBALINT.H, MOVEMENTFUNCTIONS.INO, SENSORFUNCTIONS.INO*/
+#include "Global_Int.h"
+#include <Servo.h>
 
 /*I KNOW THIS IS MESSY AND BADLY ORGANIZED. BEAR WITH ME.*/
 //define objectives
@@ -31,198 +32,57 @@ int objective = sweepOuterField;
 //figure out the factor which converts angle degrees to delay time while rotating
 #define delayScalingFactor 22.388
 
-bool isSafeDistanceAway(int sensor){
-    if(Sensor[sensor].Distance < safeDistanceAway){
-        return false;
-    }
-    return true;
-}
 
-// I know this should go into its own ino file eventually
-bool inPosition = false;
-bool LocationHelper(int state){
-    switch(state){
-        //should be in the pad 0 corner, sweeper facing a wall
-        case 1:
-            inPosition = false;
-            MoveForward();
-            Read_Multi_Sensors();
-            //are front sensors hitting wall?
-            //are left sensors hitting wall?
-            if(!isSafeDistanceAway(Front_Left) && !isSafeDistanceAway(Front_Right)){
-                if(!isSafeDistanceAway(Left_Front) && !isSafeDistanceAway(Left_Back)){
-                    inPosition = true;
-                }
-            }
-            //if yes, do the safe rotation adjustment and rotate
-            if(inPosition){
-                Stop();
-                SafeRotate("CW", 90);
-                return true;
-            }
-            return false;
-            //if no, return false (not in position yet)
-            break;
-        case 2:
-            inPosition = false;
-            MoveForward();
-            Read_Multi_Sensors();
-            //are front sensors hitting wall?
-            //are left sensors hitting wall?
-            if(!isSafeDistanceAway(Front_Left) && !isSafeDistanceAway(Front_Right)){
-                if(!isSafeDistanceAway(Left_Front) && !isSafeDistanceAway(Left_Back)){
-                    inPosition = true;
-                }
-            }
-            //if yes, do the safe rotation adjustment and rotate
-            if(inPosition){
-                Stop();
-                SafeRotate("CW", 90);
-                return true;
-            }
-            return false;
-            //if no, return false (not in position yet)
-            break;
-        case 3:
-            //are some of front sensors hitting wall? 
-            //are left sensors hitting wall?
-            //if yes, do the safe rotation adjustment and rotate
-            //if no, adjust position until OK to do so
-            break;
-        case 4:
-            //are front sensors hitting nebulite box (& no others?)
-            break;
-        case 5: //WILL REQUIRE TIMED MOVEMENT
-            //are right sensors hitting a wall (& no others?)
-            break;
-        case 6:
-            //is one (or maybe two) front sensors hitting nebulite box?
-            break;
-        case 7: //WILL REQUIRE TIMED MOVEMENT
-            //no sensors should be hitting anything
-            break;
-        case 8:
-            //are one or more left sensors hitting nebulite box?
-            ///are front sensors hitting wall?
-            break;
-        case 9:
-            //are front sensors hitting wall?
-            break;
-        case 10:
-            //are one or more front sensors hitting geodinium box?
-            break;
-        case 11:
-            //are front sensors hitting wall?
-            break;
-        case 12:
-            //are front sensors hitting wall?
-            //are left sensors hitting wall?
-            break;
-        case 13:
-            //are front sensors hitting geodinium box?
-            //are left sensors hitting wall?
-            break;
-    }
-}
-
-//TODO: set up sensor reading code to always assign 9999 to distance if out of range
-void SafeRotate(String direction, int angle){
-    CheckForWallCollisions();
-    
-    /*
-    //if front sensors in range, move backwards until safe distance away
-    if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
-        MoveBackward();
-        while(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
-            read_multi_sensors(); //how resource intensive is this? will re-reading take too long?
-        }
-        Stop();
-    }
-    //if left sensors in range, move right until safe distance away
-    if(!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)){
-        MoveRight();
-        while(!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)){
-            read_multi_sensors(); //how resource intensive is this? will re-reading take too long?
-        }
-        Stop();
-    }
-    //if right sensors in range, move left until safe distance away
-    if(!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)){
-        MoveLeft();
-        while(!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)){
-            read_multi_sensors(); //how resource intensive is this? will re-reading take too long?
-        }
-        Stop();
-    }
-    //if back sensors in range, move forward until safe distance away
-    if(!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)){
-        MoveForward();
-        while(!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)){
-            read_multi_sensors(); //how resource intensive is this? will re-reading take too long?
-        }
-        Stop();
-    }
-    */
-
-    angle = delayScalingFactor * angle;
-
-    if(direction == "CW"){
-        //rotate CW for x degrees
-        RotateCW();
-        //figure out how to convert time delay to equivalent rotation angle
-        delay(angle);
-        Stop();
-    }
-    else{
-        //rotate CCW for x degrees
-        RotateCCW();
-        //figure out how to convert time delay to equivalent rotation angle
-        delay(angle);
-        Stop();
-    }
-}
 //Have no idea if any of this is still necessary
 void setup() {
-Serial.begin(115200);
-BaseServo.attach(11);
+    Serial.begin(115200);
+    BaseServo.attach(11);
 
 
-// wait until serial port opens for native USB devices
-while (!Serial) { delay(1); }
-SetupSensors();
+    // wait until serial port opens for native USB devices
+    while (!Serial) { delay(1); }
+    SetupSensors();
 
 
-Serial.println(F("Starting robot..."));
-//may be necessary to bring this back once the grabbing arm is installed
-//SetupServos();
-BL.attach(FL_ID);
-FL.attach(BL_ID);
-BR.attach(BR_ID);
-FR.attach(FR_ID);
+    Serial.println(F("Starting robot..."));
+    //may be necessary to bring this back once the grabbing arm is installed
+    //SetupServos();
+    BL.attach(FL_ID);
+    FL.attach(BL_ID);
+    BR.attach(BR_ID);
+    FR.attach(FR_ID);
 }
 
 bool hasMovementStarted = true;
 void tempMovementFn(){
     hasMovementStarted = false;
-    MoveForward();
-    delay(2000);
+    while(isSafeDistanceAway(Front_Right) && isSafeDistanceAway(Front_Left)){
+        Movement_Adjust("Forward");
+    }
     Stop();
-    MoveRight();
-    delay(2000);
-    Stop();
-    MoveLeft();
-    delay(2000);
-    Stop();
-    MoveBackward();
-    delay(2000);
-    Stop();
-    RotateCW();
-    delay(2000);
+    SafeRotate("CW", 90);
+    // delay(2000);
+    // Stop();
+    // MoveRight();
+    // delay(2000);
+    // Stop();
+    // MoveLeft();
+    // delay(2000);
+    // Stop();
+    // MoveBackward();
+    // delay(2000);
+    // Stop();
+    // RotateCW();
+    // delay(2000);
 }
 void loop(){
+
+
     while(objective == setupTasks){
         //do LED stuff
         //when done, set objective to setup
+
+
     }
     while(objective == sweepOuterField){
         //state = 1;
@@ -236,6 +96,10 @@ void loop(){
         //     Stop();
         //     return;
         // }
+        if (LocationHelper(state)){
+            state++;
+            hasCaseStarted = false;
+        }
         
         if(hasMovementStarted){
             tempMovementFn();
@@ -344,3 +208,285 @@ void loop(){
 //rotate 90 CW (sweeper facing south)
 //STATE 13:
 //move south until sweeper hits geodinium container (& corner in bottom left)
+bool isSafeDistanceAway(int sensor){
+    //Read_Multi_Sensors();
+    if(Sensor[sensor].Distance < safeDistanceAway){
+        return false;
+    }
+    return true;
+}
+
+// I know this should go into its own ino file eventually
+bool inPosition = false;
+bool hasCaseStarted = false;
+bool LocationHelper(int state){
+    switch(state){
+        //should be in the pad 0 corner, sweeper facing a wall
+        case 1:
+           hasCaseStarted = true;
+            inPosition = false;
+            // MoveForward();
+            Movement_Adjust("Forward");
+            Read_Multi_Sensors();
+            //are front sensors hitting wall?
+            //are left sensors hitting wall?
+            if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
+                if(!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)){
+                    inPosition = true;
+                }
+            }
+            //if yes, do the safe rotation adjustment and rotate
+            if(inPosition){
+                Stop();
+                SafeRotate("CW", 90);
+                return true;
+            }
+            return false;
+        
+            //if no, return false (not in position yet)
+            break;
+        case 2:
+            hasCaseStarted = true;
+            inPosition = false;
+            Movement_Adjust("Forward");
+            Read_Multi_Sensors();
+            //are front sensors hitting wall?
+            //are left sensors hitting wall?
+            if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
+                if(!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)){
+                    inPosition = true;
+                }
+            }
+            //if yes, do the safe rotation adjustment and rotate
+            if(inPosition){
+                Stop();
+                SafeRotate("CW", 90);
+                return true;
+            }
+            return false;
+            //if no, return false (not in position yet)
+            break;
+        case 3:
+            //are some of front sensors hitting wall? 
+            //are left sensors hitting wall?
+            //if yes, do the safe rotation adjustment and rotate
+            //if no, adjust position until OK to do so
+            hasCaseStarted = true;
+            inPosition = false;
+            Movement_Adjust("Forward");
+            Read_Multi_Sensors();
+            if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)){
+                inPosition = true;
+            }
+            if(inPosition){
+                Stop();
+                SafeRotate("CW", 90);
+                return true;
+            }
+            return false;
+            break;
+        case 4:
+            hasCaseStarted = true;
+            inPosition = false;
+            Movement_Adjust("Forward");
+            Read_Multi_Sensors();
+            if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
+                inPosition = true;
+            }
+            //facing the south wall
+            if(inPosition){
+                Stop();
+                SafeRotate("CCW", 90);
+                return true;
+            }
+            return false;
+            break;
+        case 5: //WILL REQUIRE TIMED MOVEMENT
+            //are right sensors hitting a wall (& no others?)
+            hasCaseStarted = true;
+            Movement_Adjust("Forward");
+            delay(500);
+            Stop();
+            SafeRotate("CCW", 90);
+            return true;
+            break;
+        case 6:
+            //is one (or maybe two) front sensors hitting nebulite box?
+            inPosition = false;
+            hasCaseStarted = true;
+            Movement_Adjust("Forward");
+            Read_Multi_Sensors();
+            if(!isSafeDistanceAway(Front_Left)){
+                Stop();
+                SafeRotate("CW", 90);
+                return true;
+            }
+            return false;
+
+            break;
+        case 7: //WILL REQUIRE TIMED MOVEMENT
+            //no sensors should be hitting anything
+            inPosition = false;
+            hasCaseStarted = true;
+            Movement_Adjust("Forward");
+            delay(500);
+            Stop();
+            SafeRotate("CCW", 90);
+            return true;
+            break;
+        case 8:
+            //are one or more left sensors hitting nebulite box?
+            ///are front sensors hitting wall?
+            inPosition = false;
+            hasCaseStarted = true;
+            Movement_Adjust("Forward");
+            Read_Multi_Sensors();
+            if(!isSafeDistanceAway(Front_Left) || 
+                !isSafeDistanceAway(Front_Right) ||
+                !isSafeDistanceAway(Left_Front)){
+                    inPosition = true;
+            }
+            //turn around to face the south wall ( not there yet)
+            if(inPosition){
+                Stop();
+                SafeRotate("CCW", 180);
+                return true;
+            }
+            return false;
+            break;
+        case 9:
+            //are front sensors hitting wall?
+            inPosition = false;
+            Movement_Adjust("Forward");
+            Read_Multi_Sensors();
+            if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
+                inPosition = true;
+            }
+            if(inPosition){
+                Stop();
+                SafeRotate("CCW", 90);
+                return true;
+            }
+            return false;
+            break;
+        case 10:
+            //are one or more front sensors hitting geodinium box?
+            inPosition = false;
+            Movement_Adjust("Forward");
+            Read_Multi_Sensors();
+            if(!isSafeDistanceAway(Front_Right)){
+                inPosition = true;
+            }
+            if(inPosition){
+                Stop();
+                SafeRotate("CCW", 90);
+                return true;
+            }
+            return false;
+            break;
+        case 11:
+            //are front sensors hitting wall?
+            inPosition = false;
+            Movement_Adjust("Forward");
+            Read_Multi_Sensors();
+            if(!isSafeDistanceAway(Front_Right) || !isSafeDistanceAway(Front_Left)){
+                inPosition = true;
+            }
+            if(inPosition){
+                Stop();
+                SafeRotate("CW", 90);
+                return true;
+            }
+            return false;
+            break;
+        case 12:
+            //are front sensors hitting wall?
+            //are left sensors hitting wall?
+            inPosition = false;
+            Movement_Adjust("Forward");
+            Read_Multi_Sensors();
+            if(!isSafeDistanceAway(Front_Right) || !isSafeDistanceAway(Front_Left)){
+                inPosition = true;
+            }
+            if(inPosition){
+                Stop();
+                SafeRotate("CW", 90);
+                return true;
+            }
+            return false;
+            break;
+        case 13:
+            //are front sensors hitting geodinium box?
+            //are left sensors hitting wall?
+            inPosition = false;
+            Movement_Adjust("Forward");
+            Read_Multi_Sensors();
+            if(!isSafeDistanceAway(Front_Right) || !isSafeDistanceAway(Front_Left)){
+                inPosition = true;
+            }
+            if(inPosition){
+                Stop();
+                SafeRotate("CW", 90);
+                return true;
+            }
+            return false;
+            break;
+    }
+}
+
+//TODO: set up sensor reading code to always assign 9999 to distance if out of range
+void SafeRotate(String direction, int angle){
+    CheckForWallCollisions();
+    
+    /*
+    //if front sensors in range, move backwards until safe distance away
+    if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
+        MoveBackward();
+        while(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
+            read_multi_sensors(); //how resource intensive is this? will re-reading take too long?
+        }
+        Stop();
+    }
+    //if left sensors in range, move right until safe distance away
+    if(!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)){
+        MoveRight();
+        while(!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)){
+            read_multi_sensors(); //how resource intensive is this? will re-reading take too long?
+        }
+        Stop();
+    }
+    //if right sensors in range, move left until safe distance away
+    if(!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)){
+        MoveLeft();
+        while(!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)){
+            read_multi_sensors(); //how resource intensive is this? will re-reading take too long?
+        }
+        Stop();
+    }
+    //if back sensors in range, move forward until safe distance away
+    if(!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)){
+        MoveForward();
+        while(!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)){
+            read_multi_sensors(); //how resource intensive is this? will re-reading take too long?
+        }
+        Stop();
+    }
+    */
+
+    angle = delayScalingFactor * angle;
+
+    if(direction == "CW"){
+        //rotate CW for x degrees
+        RotateCW();
+        //figure out how to convert time delay to equivalent rotation angle
+        delay(angle);
+        Stop();
+    }
+    else{
+        //rotate CCW for x degrees
+        RotateCCW();
+        //figure out how to convert time delay to equivalent rotation angle
+        delay(angle);
+        Stop();
+    }
+}
