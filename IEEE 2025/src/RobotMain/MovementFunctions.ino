@@ -160,7 +160,7 @@ void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
   Read_Multi_Sensors();
   int ClosestWall = GetClosestWall(); 
   float Power = (MaxDistancePower - abs(ReadClosestWall(ClosestWall))) /MaxDistancePower;
-  string SideTilt;
+  String SideTilt;
 
   if (Power > 0){
     SideTilt = "CCW";

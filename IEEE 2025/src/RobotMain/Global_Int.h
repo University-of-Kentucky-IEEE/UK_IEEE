@@ -8,7 +8,7 @@
 
 //initalize global variables and structures
 #define TODO 0
-#define TotalSensors 10
+#define TotalSensors 8
 #define TotalServos 13
 
 
