@@ -1,14 +1,7 @@
-#include <Servo.h>
+
 
 
 //ServoNames
-Servo GeodeSorter
-Servo MargneticStorage
-Servo NonMagneticStorage
-Servo BrushDock
-Servo ConveyorBelt
-Servo Spiral
-Servo ShippingGrab
 
 //Servo Pins
 #define GeodeSorter_Pin 4
@@ -335,7 +328,6 @@ int ReadClosestWall(int ClosestDirection){ //Output Side needed to rotate
 
 
 void CheckForTurn(int rotation) {
-  CheckForWallCollisions();
   bool InPosition = false;
   int ClosestWall = GetClosestWall();
   int DistanceDiffFronWall = 0;
@@ -359,6 +351,8 @@ void CheckForTurn(int rotation) {
 
   ChangeDirection(rotation);
 }
+
+#define safeDistanceAway 50
 
 
 void CheckForWallCollisions(){
