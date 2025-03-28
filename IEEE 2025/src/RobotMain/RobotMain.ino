@@ -18,6 +18,12 @@ int state = 1;
 //objectives to complete (change this to setupTasks later)
 int objective = sweepOuterField;
 
+//integer definitions for the brush
+int motor1pin1 = 2;
+int motor1pin2 = 3;
+int motor2pin1 = 4;
+int motor2pin2 = 5;
+
 //I AM ASSUMING SWEEPER IS ALWAYS FRONT, ALL SENSOR DIRECTIONS RELATIVE TO SWEEPER
 //        front (sweeper)
         //   @@@@@@@@
@@ -66,6 +72,18 @@ void tempMovementFn(){
     SafeRotate("CW", 90);
     Stop();
 }
+
+void brush(bool on){
+    if(on){
+        digitalWrite(motor1pin1, LOW);
+        digitalWrite(motor1pin2, HIGH);
+    }
+    else{
+        digitalWrite(motor1pin1, LOW);
+        digitalWrite(motor1pin2, LOW);
+    }
+}
+
 void loop(){
 
     while(objective == setupTasks){
