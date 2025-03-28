@@ -1,8 +1,5 @@
-#include "Adafruit_VL53L0X.h"
 
-/*DEPENDENCIES FROM LAST YEAR: GLOBALINT.H, MOVEMENTFUNCTIONS.INO, SENSORFUNCTIONS.INO*/
-#include "Global_Int.h"
-#include <Servo.h>
+
 
 /*I KNOW THIS IS MESSY AND BADLY ORGANIZED. BEAR WITH ME.*/
 //define objectives
@@ -16,7 +13,7 @@
 //tasks to do inside each objective
 int state = 1;
 //objectives to complete (change this to setupTasks later)
-int objective = sweepOuterField;
+
 
 //I AM ASSUMING SWEEPER IS ALWAYS FRONT, ALL SENSOR DIRECTIONS RELATIVE TO SWEEPER
 //        front (sweeper)
@@ -28,11 +25,15 @@ int objective = sweepOuterField;
         //     back
 
 //figure out the distance away from wall to safely rotate without hitting it
-#define safeDistanceAway 50
+#define safeDistanceAway 100
 //figure out the factor which converts angle degrees to delay time while rotating
 #define delayScalingFactor 22.388
 
 bool isSafeDistanceAway(int sensor){
+  Read_Multi_Sensors();
+  Serial.print("Sensor Value ");
+  Serial.println(Sensor[sensor].Distance);
+
     if(Sensor[sensor].Distance < safeDistanceAway){
         return false;
     }
@@ -195,33 +196,22 @@ void SafeRotate(String direction, int angle){
         Stop();
     }
 }
-//Have no idea if any of this is still necessary
-void setup() {
-    Serial.begin(115200);
-    BaseServo.attach(11);
 
 
-    // wait until serial port opens for native USB devices
-    while (!Serial) { delay(1); }
-    SetupSensors();
+ //sweeper hits geodinium container (& corner in bottom left)
 
-
-    Serial.println(F("Starting robot..."));
-    //may be necessary to bring this back once the grabbing arm is installed
-    //SetupServos();
-    BL.attach(FL_ID);
-    FL.attach(BL_ID);
-    BR.attach(BR_ID);
-    FR.attach(FR_ID);
-}
-
-bool hasMovementStarted = true;
-void tempMovementFn(){
+ void tempMovementFn(){
     hasMovementStarted = false;
+    Serial.println("starting the while loop");
     while(isSafeDistanceAway(Front_Right) && isSafeDistanceAway(Front_Left)){
         Movement_Adjust("Forward");
+        Read_Multi_Sensors();
+        DisplayReadings(1);
     }
+    Serial.println("stopping");
     Stop();
+    delay(5000);
+    Serial.println("safe rotate");
     SafeRotate("CW", 90);
     // delay(2000);
     // Stop();
@@ -237,132 +227,3 @@ void tempMovementFn(){
     // RotateCW();
     // delay(2000);
 }
-void loop(){
-
-
-    while(objective == setupTasks){
-        //do LED stuff
-        //when done, set objective to setup
-
-
-    }
-    while(objective == sweepOuterField){
-        //state = 1;
-        //if state is done executing, move to the next one
-        //NO SENSORS RN -- UNCOMMENT FOLLOWING LINES WHEN THERE ARE SENSORS
-        // if(state != 3 && LocationHelper(state)){
-        //     state++;
-        // }
-        // //end prematurely (Honestly dont think I'll even get this far)
-        // if(state == 3){
-        //     Stop();
-        //     return;
-        // }
-        
-        if(hasMovementStarted){
-            tempMovementFn();
-            
-        }
-    }
-    while(objective == pickUpBoxes){
-
-    }
-    while(objective == dropOffBlocks){
-
-    }
-    while(objective == sweepCave){
-
-    }
-    while(objective == dropOffBlocksFromCave){
-
-    }
-    while(objective == beacon){
-
-    }
-}
-
-// STATE 1: DISCOVERING GEODINIUM BOX
-//unless otherwise stated, directions are WRT orientation of field and not robot
-//start: move slightly forward (sweeper is already oriented towards box to prevent blocks getting stuck)
-//drive right until hitting geodinium box
-    //determine coordinates & orientation using this checkpoint
-//drive slightly left to allow for room to rotate
-//rotate CCW 90 degrees
-//drive slightly right until hitting box again
-//grab the box
-//looks like we may not be able to assume there are no blocks on landing pad
-//will need to sweep landing pad to pick up blocks first
-//STATE 2: MOVING GEODINIUM BOX
-//move slightly left to give room to rotate box
-//rotate CCW 180 degrees
-//drive left until hitting wall & corner near pad 0
-    //determine coordinates & orientation using this checkpoint
-//drop the box
-//TODO: we need logic to decide where to put the boxes (i.e. which april tag to garget)
-//move right exactly robot + x distance (backwards) where x is a small distance to allow room to maneuver
-//rotate CW 90 degrees to orient sweeper in front of robot
-//drive forwards until sensors on LEFT side of robot (assuming normal orientation is sweeper forward) detect box on the left
-//drive left, pushing box until it hits the wall (how to determine box has hit wall and to stop pushing?)
-    //ideally, we are now box units away from the left side of the field
-//drive forward until front sensors (sweeper end) detect wall and right sensors (grabber side)
-//grab the nebulite box
-//move backwards slightly to allow room for rotation
-//rotate CW 180 degrees to place the box near the location of pad 4
-//drop the box (sweeper is facing)
-
-//attempt 2 this time clearing off the landing pad first
-//using cardinal directions this time to make more sense
-/********************************************************************** */
-//SWEEPING NON-CAVE AREA
-//STATE 1:
-//move slightly north
-//move west until sweeper is in corner of pad 0
-//move slightly east to allow room to rotate
-//rotate CW 90 until sweeper facing north
-//STATE 2:
-//move north until sweeper in corner of pad 4
-//might be nice to write a function that uses sensor distance from wall to determine how far to adjust
-    //before rotation
-//move slightly east to allow to rotate
-//move slightly south to allow to rotate
-//rotate 90 CW (sweeper facing east)
-//STATE 3:
-//move east until sweeper hits nebulite box
-//move slightly west to allow to rotate
-//rotate 90 CW (sweeper facing south)
-//STATE 4:
-//move south until hitting wall (in between pad 0 and landing site)
-//move slightly north to allow for rotation
-//rotate CCW 90 (sweeper facing east)
-//STATE 5:
-//move forward x units (length of one side of nebulite box)
-//rotate CCW 90 (sweeper facing north)
-//STATE 6:
-//move north until sweeper hitting nebulite box
-//move south slightly to allow to rotate
-//rotate CW 90 (sweeper facing east)
-//STATE 7:
-//move east until robot no longer overlaps with nebulite box (idk distance)
-//rotate CCW 90 (sweeper facing north)
-//STATE 8:
-//move north until sweeper hits wall, sensors on westward facing side of robot detecting nebulite box corner
-//move south & east slightly to allow to rotate
-//rotate 180 CCW (sweeper facing south)
-//STATE 9:
-//move south until sweeper hits wall
-//move north slightly
-//rotate 90 CCW (sweeper facing east)
-//STATE 10:
-//move east until sweeper hits walls of geodinium container
-//move slightly west
-//rotate CCW 90 (sweeper facing north)
-//STATE 11:
-//move north until sweeper hits wall
-//move slightly south
-//rotate 90 CW (sweeper facing east)
-//STATE 12:
-//move east until sweeper hits top right corner
-//move slightly west and south
-//rotate 90 CW (sweeper facing south)
-//STATE 13:
-//move south until sweeper hits geodinium container (& corner in bottom left)

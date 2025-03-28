@@ -1,10 +1,13 @@
 #pragma once
-#include "Global_Int.h"
+
 //
 //
 //    BASIC MOVEMENT FUNCTIONS
 //
 //
+#define MinPulse 500
+#define MaxPulse 2500
+#define Stall 1500 
 
 void RotateCW(float Power) {
 
@@ -154,12 +157,12 @@ void Stop() {
 //    MOVEMENT ADJUST
 //
 //
-#define MaxDistancePower 400
+
 void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
-  Read_Multi_Sensors();
+Read_Multi_Sensors();
   int ClosestWall = GetClosestWall(); 
-  float Power = (MaxDistancePower - abs(ReadClosestWall(ClosestWall))) /MaxDistancePower;
-  string SideTilt;
+  float Power = ReadClosestWall(ClosestWall);
+  String SideTilt;
 
   if (Power > 0){
     SideTilt = "CCW";
