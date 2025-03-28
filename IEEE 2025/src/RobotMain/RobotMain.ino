@@ -59,7 +59,24 @@ void tempMovementFn(){
     while(isSafeDistanceAway(Front_Right) && isSafeDistanceAway(Front_Left)){
         Movement_Adjust("Forward");
     }
+    while(isSafeDistanceAway(Front_Right) && isSafeDistanceAway(Front_Left)){
+        Movement_Adjust("Forward");
+    }
     Stop();
+    SafeRotate("CW", 90);
+    // delay(2000);
+    // Stop();
+    // MoveRight();
+    // delay(2000);
+    // Stop();
+    // MoveLeft();
+    // delay(2000);
+    // Stop();
+    // MoveBackward();
+    // delay(2000);
+    // Stop();
+    // RotateCW();
+    // delay(2000);
     SafeRotate("CW", 90);
     // delay(2000);
     // Stop();
@@ -78,9 +95,13 @@ void tempMovementFn(){
 void loop(){
 
 
+
+
     while(objective == setupTasks){
         //do LED stuff
         //when done, set objective to setup
+
+
 
 
     }
