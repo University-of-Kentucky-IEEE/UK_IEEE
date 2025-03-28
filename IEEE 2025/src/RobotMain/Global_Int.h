@@ -203,6 +203,16 @@ Servo FL;  //front left servo
 Servo BL;  //back left servo
 Servo PixyCam;
 
+
+//ServoNames (current)
+ Servo GeodeSorter;
+ Servo MagneticStorage;
+ Servo NonMagneticStorage;
+ Servo BrushDock;
+ Servo ConveyorBelt;
+ Servo ShippingGrab;
+ Servo Spiral;
+
 //Turn base turnning raduis
 #define MAX_BASE_ANGLE 330
 #define MIN_BASE_ANGLE 2

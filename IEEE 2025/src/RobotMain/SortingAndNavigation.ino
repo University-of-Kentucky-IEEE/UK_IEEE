@@ -1,12 +1,5 @@
 #include "Global_Int.h"
-//ServoNames
- Servo GeodeSorter;
- Servo MagneticStorage;
- Servo NonMagneticStorage;
- Servo BrushDock;
- Servo ConveyorBelt;
- Servo ShippingGrab;
- Servo Spiral;
+
 
 //Servo Pins
 #define GeodeSorter_Pin 4
