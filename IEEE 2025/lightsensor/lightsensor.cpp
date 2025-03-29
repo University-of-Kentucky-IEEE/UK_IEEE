@@ -1,6 +1,6 @@
 #include "lightsensor.h"
 
-int SenseLight(const int photoRpin, Stream &Serial)
+int SenseLight(const int photoRpin)
 {
   // initialize infinite while loop variable
   bool loopFlag = 0;
