@@ -1,3 +1,6 @@
+/*code to programt the Xiao Seeed Sense Esp32 board + camera for apriltag sensing tags 0-4.
+  send the reading over uart TX pin
+*/ 
 /* Untested functions to read off of RX1 line on the Arduino.
 	The esp32 camera module is powered off the arduino 3.3V. GND.
 	Connect Mega's TX1 line to ESP RX line 
