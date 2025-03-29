@@ -16,7 +16,7 @@
 //tasks to do inside each objective
 int state = 1;
 //objectives to complete (change this to setupTasks later)
-int objective = sweepOuterField;
+int objective = setupTasks;
 
 //integer definitions for the brush
 int motor1pin1 = 2;
@@ -59,6 +59,17 @@ void setup() {
     FR.attach(FR_ID);
 }
 
+void unsafeRotate(String direction, int angle){
+    if(direction.equals("CW")){
+        RotateCW();
+    }
+    else{
+        RotateCCW();
+    }
+    delay(angle * delayScalingFactor);
+    Stop();
+}
+
 bool hasMovementStarted = true;
 void tempMovementFn(){
     hasMovementStarted = false;
@@ -92,6 +103,14 @@ void tempMovementFn(){
     // }
 
 }
+void move(bool movement_adjust){
+    if(movement_adjust){
+        Movement_Adjust("Forward");
+    }
+    else{
+        MoveForward();
+    }
+}
 
 void brush(bool on){
     if(on){
@@ -104,13 +123,67 @@ void brush(bool on){
     }
 }
 
+bool useMovementAdjust = true;
 void loop(){
 
     while(objective == setupTasks){
         //do LED stuff
         //when done, set objective to setup
+        delay(500);
+        objective = sweepOuterField;
     }
     while(objective == sweepOuterField){
+        move(useMovementAdjust);
+        delay(431.0625);
+        Stop();
+        unsafeRotate("CW", 90);
+        move(useMovementAdjust);
+        delay(1034.55);
+        Stop();
+        unsafeRotate("CW", 90);
+        move(useMovementAdjust);
+        delay(354.569);
+        Stop();
+        unsafeRotate("CW", 90);
+        move(useMovementAdjust);
+        delay(407.55);
+        Stop();
+        unsafeRotate("CCW", 90);
+        move(useMovementAdjust);
+        delay(446.738);
+        Stop();
+        unsafeRotate("CCW", 90);
+        move(useMovementAdjust);
+        delay(846.45);
+        Stop();
+        unsafeRotate("CW", 90);
+        move(useMovementAdjust);
+        delay(188.1);
+        Stop();
+        unsafeRotate("CW", 90);
+        move(useMovementAdjust);
+        delay(188.1);
+        Stop();
+        unsafeRotate("CW", 180);
+        move(useMovementAdjust);
+        delay(1222.65);
+        Stop();
+        unsafeRotate("CCW", 90);
+        move(useMovementAdjust);
+        delay(501.6);
+        Stop();
+        unsafeRotate("CCW", 90);
+        move(useMovementAdjust);
+        delay(1222.6);
+        Stop();
+        unsafeRotate("CW", 90);
+        move(useMovementAdjust);
+        delay(287.48);
+        Stop();
+        unsafeRotate("CW", 90);
+        move(useMovementAdjust);
+        delay(815.1);
+        Stop();
         //state = 1;
         //if state is done executing, move to the next one
         //NO SENSORS RN -- UNCOMMENT FOLLOWING LINES WHEN THERE ARE SENSORS
@@ -126,10 +199,11 @@ void loop(){
         //     state++;
         // }
         
-        if(hasMovementStarted){
-            tempMovementFn();
+        
+        // if(hasMovementStarted){
+        //     tempMovementFn();
             
-        }
+        // }
     }
     while(objective == pickUpBoxes){
 
