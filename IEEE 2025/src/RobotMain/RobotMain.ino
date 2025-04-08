@@ -16,7 +16,7 @@
 //tasks to do inside each objective
 int state = 1;
 //objectives to complete (change this to setupTasks later)
-int objective = sweepOuterField;
+int objective = setupTasks;
 
 //integer definitions for the brush
 int motor1pin1 = 2;
@@ -59,18 +59,57 @@ void setup() {
     FR.attach(FR_ID);
 }
 
+void unsafeRotate(String direction, int angle){
+    if(direction.equals("CW")){
+        RotateCW();
+    }
+    else{
+        RotateCCW();
+    }
+    delay(angle * delayScalingFactor);
+    Stop();
+}
+
 bool hasMovementStarted = true;
 void tempMovementFn(){
     hasMovementStarted = false;
-    while(isSafeDistanceAway(Front_Right) && isSafeDistanceAway(Front_Left)){
-        Movement_Adjust("Forward");
-    }
-    while(isSafeDistanceAway(Front_Right) && isSafeDistanceAway(Front_Left)){
-        Movement_Adjust("Forward");
+    // while(isSafeDistanceAway(Front_Right) && isSafeDistanceAway(Front_Left)){
+    //     Movement_Adjust("Forward");
+    // }
+    // while(isSafeDistanceAway(Front_Right) && isSafeDistanceAway(Front_Left)){
+    //     Movement_Adjust("Forward");
+    // }
+    // Stop();
+    // SafeRotate("CW", 90);
+    // Stop();
+
+
+
+    //brush(true);
+    
+    //BrushDock.write(135); //moves brush up so sensors can read
+
+    
+    //delay(250);
+
+    while (isSafeDistanceAway(Front_Left)){
+        Read_Multi_Sensors();
+        MoveForward();
+
     }
     Stop();
-    SafeRotate("CW", 90);
-    Stop();
+    // else{//put brush back into position
+    //     MoveBrush(true);
+    // }
+
+}
+void move(bool movement_adjust){
+    if(movement_adjust){
+        Movement_Adjust("Forward");
+    }
+    else{
+        MoveForward();
+    }
 }
 
 void brush(bool on){
@@ -84,13 +123,81 @@ void brush(bool on){
     }
 }
 
+bool useMovementAdjust = true;
 void loop(){
 
     while(objective == setupTasks){
         //do LED stuff
         //when done, set objective to setup
+        delay(500);
+        objective = sweepOuterField;
     }
     while(objective == sweepOuterField){
+        move(useMovementAdjust);
+        delay(3928.51);
+        Stop();
+        delay(500);
+        unsafeRotate("CW", 90);
+        move(useMovementAdjust);
+        delay(9428.43);
+        Stop();
+        delay(500);
+        unsafeRotate("CW", 90);
+        move(useMovementAdjust);
+        delay(3231.38);
+        Stop();
+        delay(500);
+        unsafeRotate("CW", 90);
+        move(useMovementAdjust);
+        delay(3714.23);
+        Stop();
+        delay(500);
+        unsafeRotate("CCW", 90);
+        move(useMovementAdjust);
+        delay(4071.36);
+        Stop();
+        delay(500);
+        unsafeRotate("CCW", 90);
+        move(useMovementAdjust);
+        delay(7714.17);
+        Stop();
+        delay(500);
+        unsafeRotate("CW", 90);
+        move(useMovementAdjust);
+        delay(1714.26);
+        Stop();
+        delay(500);
+        unsafeRotate("CW", 90);
+        move(useMovementAdjust);
+        delay(1714.26);
+        Stop();
+        delay(500);
+        unsafeRotate("CW", 180);
+        move(useMovementAdjust);
+        delay(11142.69);
+        Stop();
+        delay(500);
+        unsafeRotate("CCW", 90);
+        move(useMovementAdjust);
+        delay(4571.36);
+        Stop();
+        delay(500);
+        unsafeRotate("CCW", 90);
+        move(useMovementAdjust);
+        delay(11142.69);
+        Stop();
+        delay(500);
+        unsafeRotate("CW", 90);
+        move(useMovementAdjust);
+        delay(2619.96);
+        Stop();
+        delay(500);
+        unsafeRotate("CW", 90);
+        move(useMovementAdjust);
+        delay(7714.17);
+        Stop();
+        delay(5000);
+        objective = pickUpBoxes;
         //state = 1;
         //if state is done executing, move to the next one
         //NO SENSORS RN -- UNCOMMENT FOLLOWING LINES WHEN THERE ARE SENSORS
@@ -106,13 +213,15 @@ void loop(){
         //     state++;
         // }
         
-        if(hasMovementStarted){
-            tempMovementFn();
+        
+        // if(hasMovementStarted){
+        //     tempMovementFn();
             
-        }
+        // }
     }
     while(objective == pickUpBoxes){
-
+        Stop();
+        delay(5000);
     }
     while(objective == dropOffBlocks){
 
@@ -150,10 +259,8 @@ bool LocationHelper(int state){
             Read_Multi_Sensors();
             //are front sensors hitting wall?
             //are left sensors hitting wall?
-            if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
-                if(!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)){
+            if(!isSafeDistanceAway(Front_Left)){
                     inPosition = true;
-                }
             }
             //if yes, do the safe rotation adjustment and rotate
             if(inPosition){
@@ -172,10 +279,10 @@ bool LocationHelper(int state){
             Read_Multi_Sensors();
             //are front sensors hitting wall?
             //are left sensors hitting wall?
-            if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
-                if(!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)){
+            if(!isSafeDistanceAway(Front_Left)){
+
                     inPosition = true;
-                }
+
             }
             //if yes, do the safe rotation adjustment and rotate
             if(inPosition){
@@ -195,7 +302,7 @@ bool LocationHelper(int state){
             inPosition = false;
             Movement_Adjust("Forward");
             Read_Multi_Sensors();
-            if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)){
+            if(!isSafeDistanceAway(Front_Left)){
                 inPosition = true;
             }
             if(inPosition){
@@ -210,7 +317,7 @@ bool LocationHelper(int state){
             inPosition = false;
             Movement_Adjust("Forward");
             Read_Multi_Sensors();
-            if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
+            if(!isSafeDistanceAway(Front_Left)){
                 inPosition = true;
             }
             //facing the south wall
@@ -261,9 +368,7 @@ bool LocationHelper(int state){
             hasCaseStarted = true;
             Movement_Adjust("Forward");
             Read_Multi_Sensors();
-            if(!isSafeDistanceAway(Front_Left) || 
-                !isSafeDistanceAway(Front_Right) ||
-                !isSafeDistanceAway(Left_Front)){
+            if(!isSafeDistanceAway(Front_Left)){
                     inPosition = true;
             }
             //turn around to face the south wall ( not there yet)
@@ -279,7 +384,7 @@ bool LocationHelper(int state){
             inPosition = false;
             Movement_Adjust("Forward");
             Read_Multi_Sensors();
-            if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
+            if(!isSafeDistanceAway(Front_Left)){
                 inPosition = true;
             }
             if(inPosition){
@@ -289,27 +394,21 @@ bool LocationHelper(int state){
             }
             return false;
             break;
-        case 10:
-            //are one or more front sensors hitting geodinium box?
+        case 10: //CHANGING TO BE TIMED MOVEMENT
             inPosition = false;
+            hasCaseStarted = true;
             Movement_Adjust("Forward");
-            Read_Multi_Sensors();
-            if(!isSafeDistanceAway(Front_Right)){
-                inPosition = true;
-            }
-            if(inPosition){
-                Stop();
-                SafeRotate("CCW", 90);
-                return true;
-            }
-            return false;
+            delay(500);
+            Stop();
+            SafeRotate("CCW", 90);
+            return true;
             break;
         case 11:
             //are front sensors hitting wall?
             inPosition = false;
             Movement_Adjust("Forward");
             Read_Multi_Sensors();
-            if(!isSafeDistanceAway(Front_Right) || !isSafeDistanceAway(Front_Left)){
+            if(!isSafeDistanceAway(Front_Left)){
                 inPosition = true;
             }
             if(inPosition){
@@ -325,7 +424,7 @@ bool LocationHelper(int state){
             inPosition = false;
             Movement_Adjust("Forward");
             Read_Multi_Sensors();
-            if(!isSafeDistanceAway(Front_Right) || !isSafeDistanceAway(Front_Left)){
+            if(!isSafeDistanceAway(Front_Left)){
                 inPosition = true;
             }
             if(inPosition){
@@ -341,12 +440,12 @@ bool LocationHelper(int state){
             inPosition = false;
             Movement_Adjust("Forward");
             Read_Multi_Sensors();
-            if(!isSafeDistanceAway(Front_Right) || !isSafeDistanceAway(Front_Left)){
+            if(!isSafeDistanceAway(Front_Left)){
                 inPosition = true;
             }
             if(inPosition){
                 Stop();
-                SafeRotate("CW", 90);
+                objective = pickUpBoxes;
                 return true;
             }
             return false;
