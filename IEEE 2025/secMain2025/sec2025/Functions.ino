@@ -63,8 +63,11 @@ void DisplayReadings(int Pointer) {  //Displays reading (for degbugging and test
   }
 }
 
+// light sensor functions
+
+// function to get the avg light level for the period length of seconds. 1000 = 1 sec
 int LightAverage(const int pin){
-  const unsigned long period = 1000;    // period of 1 seconds
+    const unsigned long period = 350;    // period of 1 seconds
   unsigned long lightAvg = 0;
   unsigned long startMillis = millis();
   while(millis() - startMillis < period){ 
@@ -72,14 +75,35 @@ int LightAverage(const int pin){
     lightAvg = lightAvg + analogRead(pin);
   }
   return (lightAvg / period); // return avg per millisecond for now
-  // issue where the value return is not quite an expected average but it works
 }
 
-/*  Useless but can be used as reference
-void AdjustServo(Servo Tester, int ServoID, int SideDif) {  //Test code for rotating a servo based on sensor tilt
-  int ChangePosition = map(SideDif, -300, 300, 500, 2500);
-  Tester.write(ChangePosition);
-  ServoType[ServoID].CurrentPosition = Tester.read();
-}
+// senses for 5 seconds changes in light levels, then it continues with rest of following robot functions
+int SenseLight(const int photoRpin)
+{
+  // initialize while loop variable and timeout for function
+  bool loopFlag = 0;
+  const unsigned long period = 10000;  // how long the program will run for max
+  unsigned long startMillis = millis(); // time at start of program
 
-*/
+  // get first light avg number
+  unsigned int prevAvg = LightAverage(photoRpin); // read voltage at pin A0, the photoresistor
+  
+  // continuously get average light readings and compare them until large difference detected
+  // then set loopFlag to 1 or until 5 seconds have passed
+  while(millis() - startMillis < period){
+    unsigned int curAvg = LightAverage(photoRpin);  // take another average after previous
+
+    //Serial.print("Current: ");
+    //Serial.println(curAvg);
+    //Serial.print("cur avg need to beat: ");
+    
+    unsigned int beatVal = 1.2*prevAvg;
+    //Serial.println(beatVal);
+    if(curAvg >= beatVal){ // if current average is greater than 1.2x prevAvg
+      loopFlag = 1;
+      break;
+    }
+
+    prevAvg = curAvg;   // current becomes previous to compare with next current.
+  }
+}

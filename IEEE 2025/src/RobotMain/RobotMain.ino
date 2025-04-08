@@ -134,56 +134,70 @@ void loop(){
     }
     while(objective == sweepOuterField){
         move(useMovementAdjust);
-        delay(431.0625);
+        delay(3928.51);
         Stop();
+        delay(500);
         unsafeRotate("CW", 90);
         move(useMovementAdjust);
-        delay(1034.55);
+        delay(9428.43);
         Stop();
+        delay(500);
         unsafeRotate("CW", 90);
         move(useMovementAdjust);
-        delay(354.569);
+        delay(3231.38);
         Stop();
+        delay(500);
         unsafeRotate("CW", 90);
         move(useMovementAdjust);
-        delay(407.55);
+        delay(3714.23);
         Stop();
+        delay(500);
         unsafeRotate("CCW", 90);
         move(useMovementAdjust);
-        delay(446.738);
+        delay(4071.36);
         Stop();
+        delay(500);
         unsafeRotate("CCW", 90);
         move(useMovementAdjust);
-        delay(846.45);
+        delay(7714.17);
         Stop();
+        delay(500);
         unsafeRotate("CW", 90);
         move(useMovementAdjust);
-        delay(188.1);
+        delay(1714.26);
         Stop();
+        delay(500);
         unsafeRotate("CW", 90);
         move(useMovementAdjust);
-        delay(188.1);
+        delay(1714.26);
         Stop();
+        delay(500);
         unsafeRotate("CW", 180);
         move(useMovementAdjust);
-        delay(1222.65);
+        delay(11142.69);
         Stop();
+        delay(500);
         unsafeRotate("CCW", 90);
         move(useMovementAdjust);
-        delay(501.6);
+        delay(4571.36);
         Stop();
+        delay(500);
         unsafeRotate("CCW", 90);
         move(useMovementAdjust);
-        delay(1222.6);
+        delay(11142.69);
         Stop();
+        delay(500);
         unsafeRotate("CW", 90);
         move(useMovementAdjust);
-        delay(287.48);
+        delay(2619.96);
         Stop();
+        delay(500);
         unsafeRotate("CW", 90);
         move(useMovementAdjust);
-        delay(815.1);
+        delay(7714.17);
         Stop();
+        delay(5000);
+        objective = pickUpBoxes;
         //state = 1;
         //if state is done executing, move to the next one
         //NO SENSORS RN -- UNCOMMENT FOLLOWING LINES WHEN THERE ARE SENSORS
@@ -206,7 +220,8 @@ void loop(){
         // }
     }
     while(objective == pickUpBoxes){
-
+        Stop();
+        delay(5000);
     }
     while(objective == dropOffBlocks){
 

@@ -17,7 +17,7 @@
 int InPlaceLevel = 0;
 bool InPlace1 = false;
 bool InPlace2 = false;
-const int photoRpin = A1;  // pin of the photoresistor
+const int photoRpin = A0;  // pin of the photoresistor
 bool loopFlag = 0;
 unsigned int prevAvg;
 unsigned int curAvg;

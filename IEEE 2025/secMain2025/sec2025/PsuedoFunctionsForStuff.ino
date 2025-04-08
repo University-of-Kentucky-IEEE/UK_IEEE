@@ -2,14 +2,15 @@
 #include "Global_Int.h"
 
 //ServoNames
- Servo GeodeSorter;
- Servo MagneticStorage;
- Servo NonMagneticStorage;
- Servo BrushDock;
- Servo ConveyorBelt;
- Servo ShippingGrab;
- Servo Spiral;
- Servo SpinBrush;
+Servo GeodeSorter;
+Servo MagneticStorage;
+Servo NonMagneticStorage;
+Servo BrushDock;
+Servo ConveyorBelt;
+Servo ShippingGrab;
+Servo Spiral;
+Servo SpinBrush;
+Servo Beacon;
 
 //Servo Pins
 #define GeodeSorter_Pin 4
@@ -20,6 +21,7 @@
 #define Spiral_Pin 6
 #define ShippingGrab_Pin 7
 #define SpinBrush_Pin 14
+#define Beacon_Pin 17
 
 #define pin_FR 10
 #define pin_FL 9
@@ -41,8 +43,10 @@ void ServoSetup() {
   ConveyorBelt.attach(ConveyorBelt_Pin);
 
   Spiral.attach(Spiral_Pin);
+  Spiral.writeMicroseconds(1450);
 
   ShippingGrab.attach(ShippingGrab_Pin);
+
 
   BL.attach(pin_BL);
   BR.attach(pin_BR);
@@ -50,6 +54,9 @@ void ServoSetup() {
   FR.attach(pin_FR);
 
   SpinBrush.attach(SpinBrush_Pin);
+
+  Beacon.attach(Beacon_Pin);
+  Beacon.write(90);
 }
 
 //
@@ -59,65 +66,69 @@ void ServoSetup() {
 
 void MagneticStorageContainer(bool Open) {
   if (Open) {  //Open Magnetic Storage Container
-    MagneticStorage.write(90);
+    MagneticStorage.writeMicroseconds(2200);
+    delay(500);
+    MagneticStorage.writeMicroseconds(800);
   } else {  //Close Magnetic Storage Container
-    MagneticStorage.write(0);
+    MagneticStorage.writeMicroseconds(1990);
   }
 }
 
 void NonMagneticStorageContainer(bool Open) {
-  if (Open) {  //Open Magnetic Storage Container
-    NonMagneticStorage.write(90);
+   if (Open) {  //Open Magnetic Storage Container
+    NonMagneticStorage.writeMicroseconds(800);
+    delay(500);
+    NonMagneticStorage.writeMicroseconds(2200);
   } else {  //Close Magnetic Storage Container
-    NonMagneticStorage.write(0);
+    NonMagneticStorage.writeMicroseconds(1348);
   }
 }
 
 void SortGeode(bool magnetic) {
   if (magnetic) {  //if Magnetic geode is detected
-    GeodeSorter.write(180);
+    GeodeSorter.writeMicroseconds(868);
   } else {  //Default sort to non magnetic (NEED TO TEST FOR CORRECT ANGLES)
-    GeodeSorter.write(0);
+    GeodeSorter.writeMicroseconds(1739);
   }
 }
 
-/*void GrabShippingContainer(bool Grab) {
+void GrabShippingContainer(bool Grab) {
   if (Grab) {  // If we want to grab shipping container
     ShippingGrab.write(0);
   } else {  //Release
     ShippingGrab.write(135);
   }
-}*/
+}
 
 void MoveBrush(bool InPosition) {
   if (InPosition) {  //Brush is in position
-    BrushDock.write(140);
+    BrushDock.writeMicroseconds(2200);
   } else {  //Resting Position
-    BrushDock.write(0);
+    BrushDock.writeMicroseconds(900);
   }
 }
 
 void spin(bool active) {
   if (active) {
-    SpinBrush.writeMicroseconds(MinPulse); // TODO: check if this works lol
+    SpinBrush.writeMicroseconds(MinPulse);  // TODO: check if this works lol
   } else {
     SpinBrush.writeMicroseconds(Stall);
   }
 }
 
 
-/*void EnableSortingSystem(bool Status){
-  if (Status){          //enable Sorting System (ConveyorBelt, Brush, Brush Position, and spiral)
-    MoveBrush(true); 
-    ConveyorBelt.writeMicroseconds(1750);
+void EnableSortingSystem(bool Status) {
+  if (Status) {  //enable Sorting System (ConveyorBelt, Brush, Brush Position, and spiral)
+    //MoveBrush(true);
+    ConveyorBelt.writeMicroseconds(1250);
     Spiral.writeMicroseconds(1750);
 
   } else {
-    MoveBrush(false); 
+   brush(false);
     ConveyorBelt.writeMicroseconds(1500);
     Spiral.writeMicroseconds(1500);
   }
-}*/
+}
 
 
 
@@ -128,7 +139,7 @@ void spin(bool active) {
 float TimeSinceDetection = 0.0;
 void CheckForMagnet() {  //Checks for Magnetic Field
 
-  int HallEffectReading = analogRead(A0);
+  int HallEffectReading = analogRead(A1);
   Serial.print("Hall Sensor Reading = ");
   Serial.print(HallEffectReading);
 
@@ -136,7 +147,7 @@ void CheckForMagnet() {  //Checks for Magnetic Field
     Serial.println("  Magent NOT Detected");                     //
     Serial.print("  Time Since Last Detection ");                //
     Serial.println(millis() - TimeSinceDetection);               //
-    if ((millis() - TimeSinceDetection) >= 3000) {               //check time since last magnetic detection, reset sorter if xxx seconds passed
+    if ((millis() - TimeSinceDetection) >= 1500) {               //check time since last magnetic detection, reset sorter if xxx seconds passed
       SortGeode(false);
       Serial.print("  Time Since Last Detection ");   //
       Serial.println(millis() - TimeSinceDetection);  //
@@ -170,7 +181,7 @@ int CheckShippingContainerPosition() {  //checks where shipping container is loc
   Serial.println(Sensor[Back_Right].Distance);
   Serial.print("Back Left ");
   Serial.println(Sensor[Back_Left].Distance);
-  
+
   if (Sensor[Back_Right].Distance < MinContainerDistance && Sensor[Back_Left].Distance < MinContainerDistance) {  //Container is in MIDDLE of robot , Both back sensors are very close
     Serial.println("Shipping Container is in the middle");
     return ContainerInMiddle;
@@ -194,8 +205,8 @@ void DepositGeodes(bool magnetic) {   //ONLY USE IF WE KNOW WHERE SHIPPING CONTA
   bool Deposited = false;
   int CurrentContainerPosition = CheckShippingContainerPosition();
   while (!Deposited) {  //loop until geodes are deposited
-     CurrentContainerPosition = CheckShippingContainerPosition();
-  
+    CurrentContainerPosition = CheckShippingContainerPosition();
+
     if (CurrentContainerPosition == ContainerOnRightSide) {  //If Container is on Right Side of Robot
       if (magnetic) {
         MoveBackward(.25);
@@ -247,8 +258,8 @@ void DepositGeodes(bool magnetic) {   //ONLY USE IF WE KNOW WHERE SHIPPING CONTA
 }
 
 
-void Shake(){       //Shake the Geodes out
-  for(int i = 0; i < 25; i++){
+void Shake() {  //Shake the Geodes out
+  for (int i = 0; i < 25; i++) {
     MoveForward(0.25);
     delay(100);
     MoveBackward(0.25);
@@ -320,15 +331,15 @@ int GetClosestWall() {  //gets closest wall direction
       ClosestDirection = i;
     }
   }
-  ClosestDirection = OutputDirection(ClosestDirection - Direction);  // ClosestWall - Direction    
-  
+  ClosestDirection = OutputDirection(ClosestDirection - Direction);  // ClosestWall - Direction
+
   //x  = Closest Directoin
-  //  N E S W 
+  //  N E S W
   //N 0 1 2 3
-  //E 3 0 1 2  
-  //S 2 3 0 1   -> z = side on robot Facing nearest Wall   -> ID for closest Side sensors    Sensor1 = ClosestDirection * 2 and Sensor2 = ClosestDirection * 2 + 1 
+  //E 3 0 1 2
+  //S 2 3 0 1   -> z = side on robot Facing nearest Wall   -> ID for closest Side sensors    Sensor1 = ClosestDirection * 2 and Sensor2 = ClosestDirection * 2 + 1
   //W 1 2 3 0
-//y = RobotFacing
+  //y = RobotFacing
   return ClosestDirection;
 }
 
@@ -338,10 +349,10 @@ int GetClosestWall() {  //gets closest wall direction
 //S 4	5	6	7	0	1	2	3
 //W 2 3 4	5	6	7	0	1
 
-int ReadClosestWall(int ClosestDirection){ //Output Side needed to rotate
-  read_single_sensor(ClosestDirection*2);
-  read_single_sensor(ClosestDirection*2 + 1);
-  int DistanceDiffFronWall = Sensor[ClosestDirection*2].Distance - Sensor[ClosestDirection*2 + 1].Distance;
+int ReadClosestWall(int ClosestDirection) {  //Output Side needed to rotate
+  read_single_sensor(ClosestDirection * 2);
+  read_single_sensor(ClosestDirection * 2 + 1);
+  int DistanceDiffFronWall = Sensor[ClosestDirection * 2].Distance - Sensor[ClosestDirection * 2 + 1].Distance;
   return DistanceDiffFronWall;
 }
 
@@ -352,19 +363,18 @@ void CheckForTurn(int rotation) {
   int DistanceDiffFronWall = 0;
   switch (rotation) {
     case CW:
-    ClosestWall = OutputDirection(ClosestWall - 1); //Sensors that will reach the closest wall next
+      ClosestWall = OutputDirection(ClosestWall - 1);  //Sensors that will reach the closest wall next
       RotateCW(0.2);
       break;
 
     case CCW:
-    ClosestWall = OutputDirection(ClosestWall + 1); //Sensors that will reach the closest wall next
+      ClosestWall = OutputDirection(ClosestWall + 1);  //Sensors that will reach the closest wall next
       RotateCCW(0.2);
   }
 
   while (!InPosition) {
     DistanceDiffFronWall = abs(ReadClosestWall(ClosestWall));
-    if (DistanceDiffFronWall ){
-      
+    if (DistanceDiffFronWall) {
     }
   }
 
@@ -372,41 +382,41 @@ void CheckForTurn(int rotation) {
 }
 
 
-void CheckForWallCollisions(){
+void CheckForWallCollisions() {
   Read_Multi_Sensors();
-    if(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
-        MoveBackward();
-        while(!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)){
-            read_single_sensor(Front_Left);//May not need to remeasure if it does it already in the while loop
-            read_single_sensor(Front_Right); //how resource intensive is this? will re-reading take too long?
-        }
-        Stop();
+  if (!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)) {
+    MoveBackward();
+    while (!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)) {
+      read_single_sensor(Front_Left);   //May not need to remeasure if it does it already in the while loop
+      read_single_sensor(Front_Right);  //how resource intensive is this? will re-reading take too long?
     }
-    //if left sensors in range, move right until safe distance away
-    if(!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)){
-        MoveRight();
-        while(!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)){
-            read_single_sensor(Left_Front);//May not need to remeasure if it does it already in the while loop
-            read_single_sensor(Left_Back); //how resource intensive is this? will re-reading take too long?
-        }
-        Stop();
+    Stop();
+  }
+  //if left sensors in range, move right until safe distance away
+  if (!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)) {
+    MoveRight();
+    while (!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)) {
+      read_single_sensor(Left_Front);  //May not need to remeasure if it does it already in the while loop
+      read_single_sensor(Left_Back);   //how resource intensive is this? will re-reading take too long?
     }
-    //if right sensors in range, move left until safe distance away
-    if(!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)){
-        MoveLeft();
-        while(!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)){
-            read_single_sensor(Right_Front);//May not need to remeasure if it does it already in the while loop
-            read_single_sensor(Right_Back);  //how resource intensive is this? will re-reading take too long?
-        }
-        Stop();
+    Stop();
+  }
+  //if right sensors in range, move left until safe distance away
+  if (!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)) {
+    MoveLeft();
+    while (!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)) {
+      read_single_sensor(Right_Front);  //May not need to remeasure if it does it already in the while loop
+      read_single_sensor(Right_Back);   //how resource intensive is this? will re-reading take too long?
     }
-    //if back sensors in range, move forward until safe distance away
-    if(!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)){
-        MoveForward();
-        while(!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)){
-            read_single_sensor(Back_Left);  //May not need to remeasure if it does it already in the while loop
-            read_single_sensor(Back_Right); //how resource intensive is this? will re-reading take too long?
-        }
-        Stop();
+    Stop();
+  }
+  //if back sensors in range, move forward until safe distance away
+  if (!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)) {
+    MoveForward();
+    while (!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)) {
+      read_single_sensor(Back_Left);   //May not need to remeasure if it does it already in the while loop
+      read_single_sensor(Back_Right);  //how resource intensive is this? will re-reading take too long?
     }
+    Stop();
+  }
 }

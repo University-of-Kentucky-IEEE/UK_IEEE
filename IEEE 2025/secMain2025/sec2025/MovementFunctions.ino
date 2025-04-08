@@ -142,6 +142,7 @@ void MoveBackward() {
 }
 
 void Stop() {
+  brush(true);
   FL.writeMicroseconds(Stall);
   BL.writeMicroseconds(Stall);
 
@@ -154,6 +155,7 @@ void Stop() {
 //    MOVEMENT ADJUST
 //
 //
+
 
 void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
   Read_Multi_Sensors();
@@ -214,13 +216,15 @@ void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
     }
   } else if (Direction == "Left") {
     if (SideTilt == "CCW") {  //tilting left
-                              /*
-      FL.writeMicroseconds(MaxPulse);
-  BL.writeMicroseconds(MinPulse);
+                              
+                                                                                                /*
+                                                                                                      FL.writeMicroseconds(MaxPulse);
+                                                                                                  BL.writeMicroseconds(MinPulse);
 
-  FR.writeMicroseconds(MaxPulse);
-  BR.writeMicroseconds(MinPulse);
-*/
+                                                                                                  FR.writeMicroseconds(MaxPulse);
+                                                                                                  BR.writeMicroseconds(MinPulse);
+                                                                                                */
+  
       FL.writeMicroseconds(MaxPulse - 1000 * (1-Power));
       BL.writeMicroseconds(MinPulse );
 
@@ -278,3 +282,86 @@ void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
     Stop();
   }
 }
+
+
+//Hardcode test adjust:Unchecked if working
+// void Movement_Adjust(String Direction, String Tilt) {
+//   if(Direction == "Forward") {
+//     if(Tilt == "cw") {
+//       RotateCW();
+//       delay(75);
+//     }
+//     else if(Tilt == "ccw"){
+//       RotateCCW();
+//       delay(75);
+//     }
+//     else{
+//       Stop();
+//     }
+//   }
+
+//   //TODO:Need to adjust
+//   else if (Direction == "Backward") { 
+//     if(Tilt == "cw") {
+//       RotateCW();
+//       delay(75);
+//     }
+//     else if(Tilt == "ccw"){
+//       RotateCCW();
+//       delay(75);
+//     }
+//     else{
+//       Stop();
+//     }
+//   }
+
+//   //TODO:Need to adjust
+//   else if(Direction == "Right") {
+//     if(Tilt == "cw") {
+//       RotateCW();
+//       delay(75);
+//     }
+//     else if(Tilt == "ccw"){
+//       RotateCCW();
+//       delay(75);
+//     }
+//     else{
+//       Stop();
+//     }
+//   }
+
+//   //TODO:Need to adjust
+//   else if(Direction == "Left") {
+//     if(Tilt == "cw") {
+//       RotateCW();
+//       delay(75);
+//     }
+//     else if(Tilt == "ccw"){
+//       RotateCCW();
+//       delay(75);
+//     }
+//     else{
+//       Stop();
+//     }
+
+//   }
+
+//   //TODO:Need to adjust
+//   else if (Direction == "Stationary") {
+//     if(Tilt == "cw") {
+//       RotateCW();
+//       delay(75);
+//     }
+//     else if(Tilt == "ccw"){
+//       RotateCCW();
+//       delay(75);
+//     }
+//     else{
+//       Stop();
+//     }
+//   }
+
+//   else {
+//     Stop();
+//   }
+// }
