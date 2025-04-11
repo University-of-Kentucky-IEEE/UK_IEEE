@@ -1,32 +1,8 @@
 //#include "RobotMain.ino"
-#include "Global_Int.h"
 
+#include <Servo.h>
 //ServoNames
-Servo GeodeSorter;
-Servo MagneticStorage;
-Servo NonMagneticStorage;
-Servo BrushDock;
-Servo ConveyorBelt;
-Servo ShippingGrab;
-Servo Spiral;
-Servo SpinBrush;
-Servo Beacon;
 
-//Servo Pins
-#define GeodeSorter_Pin 4
-#define MagneticStorage_Pin 2
-#define NonMagneticStorage_Pin 3
-#define BrushDock_Pin 8
-#define ConveyorBelt_Pin 5
-#define Spiral_Pin 6
-#define ShippingGrab_Pin 7
-#define SpinBrush_Pin 14
-#define Beacon_Pin 17
-
-#define pin_FR 10
-#define pin_FL 9
-#define pin_BR 13
-#define pin_BL 12
 
 void ServoSetup() {
   GeodeSorter.attach(GeodeSorter_Pin);
@@ -57,6 +33,7 @@ void ServoSetup() {
 
   Beacon.attach(Beacon_Pin);
   Beacon.write(90);
+  EnableSortingSystem(false);
 }
 
 //
@@ -66,20 +43,24 @@ void ServoSetup() {
 
 void MagneticStorageContainer(bool Open) {
   if (Open) {  //Open Magnetic Storage Container
+    MagneticStorage.attach(MagneticStorage_Pin);
     MagneticStorage.writeMicroseconds(2200);
     delay(500);
     MagneticStorage.writeMicroseconds(800);
   } else {  //Close Magnetic Storage Container
+    MagneticStorage.detach();
     MagneticStorage.writeMicroseconds(1990);
   }
 }
 
 void NonMagneticStorageContainer(bool Open) {
-   if (Open) {  //Open Magnetic Storage Container
+  if (Open) {  //Open Magnetic Storage Container
+    NonMagneticStorage.attach(NonMagneticStorage_Pin);
     NonMagneticStorage.writeMicroseconds(800);
     delay(500);
     NonMagneticStorage.writeMicroseconds(2200);
   } else {  //Close Magnetic Storage Container
+    NonMagneticStorage.detach();
     NonMagneticStorage.writeMicroseconds(1348);
   }
 }
@@ -120,13 +101,15 @@ void spin(bool active) {
 void EnableSortingSystem(bool Status) {
   if (Status) {  //enable Sorting System (ConveyorBelt, Brush, Brush Position, and spiral)
     //MoveBrush(true);
+    ConveyorBelt.attach(ConveyorBelt_Pin);
+    Spiral.attach(Spiral_Pin);
     ConveyorBelt.writeMicroseconds(1250);
     Spiral.writeMicroseconds(1750);
 
   } else {
-   brush(false);
-    ConveyorBelt.writeMicroseconds(1500);
-    Spiral.writeMicroseconds(1500);
+    spin(false);
+    ConveyorBelt.detach();
+    Spiral.detach();
   }
 }
 
@@ -286,20 +269,15 @@ ShippingContainerInformation ShippingContainer[2];
 //Direction
 //
 
-#define North 0
-#define East 1
-#define South 2
-#define West 3
 
-#define CW 1
-#define CCW -1
-
-int Direction = East;  //Starting Direction
-int ClosestWall = South;
 
 void ChangeDirection(int rotation) {  //Changes global direction when we rotate, CW is positive direction
   Direction = Direction + rotation;
   Direction = OutputDirection(Direction);
+  if (Debug) {
+    Serial.print("Now Facing ");
+    Serial.println(Direction);
+  }
 }
 
 int OutputDirection(int tempDirection) {  //Contrains direction to 0-3
@@ -311,27 +289,20 @@ int OutputDirection(int tempDirection) {  //Contrains direction to 0-3
       tempDirection -= 4;
     }
   }
+
   return tempDirection;
 }
 
 
-int GetClosestWall() {  //gets closest wall direction
-  Read_Multi_Sensors();
-  int FrontAverage = (Sensor[Front_Left].Distance + Sensor[Front_Right].Distance);  //North on robot 0
-  int RightAverage = (Sensor[Right_Front].Distance + Sensor[Right_Back].Distance);  // East on robot 1
-  int BackAverage = (Sensor[Back_Left].Distance + Sensor[Back_Right].Distance);     //South on robot 2
-  int LeftAverage = (Sensor[Left_Front].Distance + Sensor[Left_Back].Distance);     //West  on robot 3
-
-  int Averages[] = { FrontAverage, RightAverage, BackAverage, LeftAverage };
-
+int GetClosestWall() {           //gets closest wall direction
   int ClosestDirection = North;  //According to robot
-
   for (int i = 0; i < 4; i++) {  //gets side of the robot with the closest side
-    if (Averages[i] <= Averages[ClosestDirection]) {
+    if (Side[i].AvgDist <= Side[ClosestDirection].AvgDist) {
       ClosestDirection = i;
     }
   }
-  ClosestDirection = OutputDirection(ClosestDirection - Direction);  // ClosestWall - Direction
+
+  //ClosestDirection = OutputDirection(ClosestDirection - Direction);  // ClosestWall - Direction
 
   //x  = Closest Directoin
   //  N E S W
@@ -340,6 +311,7 @@ int GetClosestWall() {  //gets closest wall direction
   //S 2 3 0 1   -> z = side on robot Facing nearest Wall   -> ID for closest Side sensors    Sensor1 = ClosestDirection * 2 and Sensor2 = ClosestDirection * 2 + 1
   //W 1 2 3 0
   //y = RobotFacing
+
   return ClosestDirection;
 }
 
@@ -349,43 +321,75 @@ int GetClosestWall() {  //gets closest wall direction
 //S 4	5	6	7	0	1	2	3
 //W 2 3 4	5	6	7	0	1
 
-int ReadClosestWall(int ClosestDirection) {  //Output Side needed to rotate
-  read_single_sensor(ClosestDirection * 2);
-  read_single_sensor(ClosestDirection * 2 + 1);
-  int DistanceDiffFronWall = Sensor[ClosestDirection * 2].Distance - Sensor[ClosestDirection * 2 + 1].Distance;
-  return DistanceDiffFronWall;
+
+
+void ReadClosestWall() {  //Output Side needed to rotate
+  int ClosestDirection = GetClosestWall();
+  Serial.print("Reading ");
+  Serial.println(OutputSideName(ClosestDirection));
+  Read_Side(ClosestDirection);
 }
 
 
+
 void CheckForTurn(int rotation) {
+  CheckForWallCollisions();
+  Stop();
   bool InPosition = false;
+  Read_Multi_Sensors();
   int ClosestWall = GetClosestWall();
   int DistanceDiffFronWall = 0;
   switch (rotation) {
     case CW:
+      Serial.println("Rotating CW");
       ClosestWall = OutputDirection(ClosestWall - 1);  //Sensors that will reach the closest wall next
       RotateCW(0.2);
       break;
 
     case CCW:
       ClosestWall = OutputDirection(ClosestWall + 1);  //Sensors that will reach the closest wall next
+      Serial.println("Rotating CCW");
       RotateCCW(0.2);
   }
 
+  delay(1700);
+  ReadClosestWall();
+  int PreviousSideDif = Side[ClosestWall].SideDif;
+
   while (!InPosition) {
-    DistanceDiffFronWall = abs(ReadClosestWall(ClosestWall));
-    if (DistanceDiffFronWall) {
+    PreviousSideDif = Side[ClosestWall].SideDif;
+    ReadClosestWall();
+
+    Serial.print("DistanceDiffFronWall ");
+    Serial.println(Side[ClosestWall].SideDif);
+
+    if (Side[ClosestWall].SideDif < 50 || (PreviousSideDif > Side[ClosestWall].SideDif)) {  // stops turning if the dif is getting larger or if dif is small enough
+      Serial.println("Fully Turned");
+      Stop();
+      delay(2500);
     }
   }
 
   ChangeDirection(rotation);
 }
 
+void LineMove(int ReadSide, int DesiredDistance, float Speed) {  //When Going Straight and Movement Adjust Doesnt work, look at the sensors perpendicular to our movement and move to fit within the distance
+  Read_Side(ReadSide);
+  if (Side[ReadSide].AvgDist < DesiredDistance) {
+    AdjustDistance(OutputDirection(ReadSide + 2), Speed);
+    delay(100);
+  } else if (Side[ReadSide].AvgDist < DesiredDistance) {
+    AdjustDistance(ReadSide, Speed);
+    delay(100);
+  }
+}
+
+
 
 void CheckForWallCollisions() {
   Read_Multi_Sensors();
   if (!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)) {
-    MoveBackward();
+    MoveBackward(.2);
     while (!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)) {
       read_single_sensor(Front_Left);   //May not need to remeasure if it does it already in the while loop
       read_single_sensor(Front_Right);  //how resource intensive is this? will re-reading take too long?
@@ -394,7 +398,7 @@ void CheckForWallCollisions() {
   }
   //if left sensors in range, move right until safe distance away
   if (!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)) {
-    MoveRight();
+    MoveRight(.2);
     while (!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)) {
       read_single_sensor(Left_Front);  //May not need to remeasure if it does it already in the while loop
       read_single_sensor(Left_Back);   //how resource intensive is this? will re-reading take too long?
@@ -403,7 +407,7 @@ void CheckForWallCollisions() {
   }
   //if right sensors in range, move left until safe distance away
   if (!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)) {
-    MoveLeft();
+    MoveLeft(.2);
     while (!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)) {
       read_single_sensor(Right_Front);  //May not need to remeasure if it does it already in the while loop
       read_single_sensor(Right_Back);   //how resource intensive is this? will re-reading take too long?
@@ -412,7 +416,7 @@ void CheckForWallCollisions() {
   }
   //if back sensors in range, move forward until safe distance away
   if (!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)) {
-    MoveForward();
+    MoveForward(.2);
     while (!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)) {
       read_single_sensor(Back_Left);   //May not need to remeasure if it does it already in the while loop
       read_single_sensor(Back_Right);  //how resource intensive is this? will re-reading take too long?

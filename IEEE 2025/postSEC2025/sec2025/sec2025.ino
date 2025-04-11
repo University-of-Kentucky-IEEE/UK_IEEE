@@ -1,48 +1,58 @@
-// READ: THIS IS TEST BRUSH CODE !!!
+//Just Output everything God Damn
 
-/*int motor1pin1 = 2;
-int motor1pin2 = 3;
+bool Debug = true;  //Debug Some Bitches
 
-//int motor2pin1 = 4;
-//int motor2pin2 = 5;
-
-void setup() {
-  // put your setup code here, to run once:
-  pinMode(motor1pin1, OUTPUT);
-  pinMode(motor1pin2, OUTPUT);
-  pinMode(motor2pin1, OUTPUT);
-  pinMode(motor2pin2, OUTPUT);
-
-  //(Optional)
-  pinMode(1, OUTPUT);
-  //pinMode(10, OUTPUT);
-  //(Optional)
+String OutputSideName(int Side) {
+  switch (Side) {
+    case Front:
+      return "Front ";
+      break;
+    case Right:
+      return "Right ";
+      break;
+    case Back:
+      return "Back ";
+      break;
+    case Left:
+      return "Left ";
+      break;
+  }
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-
-  //Controlling speed (0  = off and 255 = max speed):
-  //(Optional)
-  analogWrite(1, 100);  //ENA  pin
-  //analogWrite(10, 200); //ENB pin
-  //(Optional)
-
-  //Exhaust
-  digitalWrite(motor1pin1, HIGH);
-  digitalWrite(motor1pin2, LOW);
-
-  //digitalWrite(motor2pin1, HIGH);
-  //digitalWrite(motor2pin2, LOW);
-  //delay(3000);
-
-
-  //Intake
-  digitalWrite(motor1pin1, LOW);
-  digitalWrite(motor1pin2, HIGH);
-
-  //digitalWrite(motor2pin1, LOW);
-  //digitalWrite(motor2pin2, HIGH);
-  //delay(3000);
+String OutputDirectionName(int Direction) {
+  switch (Direction) {
+    case North:
+      return "North ";
+      break;
+    case East:
+      return "East ";
+      break;
+    case South:
+      return "South ";
+      break;
+    case West:
+      return "West ";
+      break;
+  }
 }
-*/
+
+
+void DisplayClosestSideReadings(int ClosestDirection, bool debug) {
+  if (debug) {
+    Serial.print(OutputSideName(ClosestDirection));  //Outputs Avg dist
+    Serial.print("Average Distance = ");
+    Serial.print(Side[ClosestDirection].AvgDist);
+    Serial.print("      ");
+    Serial.print(OutputSideName(ClosestDirection));  //Outputs dif dist
+    Serial.print("Distance Diference = ");
+    Serial.print(Side[ClosestDirection].SideDif);
+    Serial.print("      ");
+    Serial.print(OutputSideName(ClosestDirection));  //Outputs left dist
+    Serial.print("Left Distance = ");
+    Serial.print(Side[ClosestDirection].LDist);
+    Serial.print("      ");
+    Serial.print(OutputSideName(ClosestDirection));  //Outputs right dist
+    Serial.print("Right Distance = ");
+    Serial.println(Side[ClosestDirection].RDist);
+  }
+}

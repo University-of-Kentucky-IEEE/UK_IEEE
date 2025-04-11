@@ -1,18 +1,21 @@
-#pragma once
-#include "Global_Int.h"
+#include <Servo.h>
 //
 //
 //    BASIC MOVEMENT FUNCTIONS
 //
 //
 
+#define MaxPulse 2500
+#define MinPulse 500
+#define Stall 1500
+
 void RotateCW(float Power) {
 
-  FL.writeMicroseconds(MaxPulse - 1000 * (1-Power));
-  BL.writeMicroseconds(MaxPulse - 1000 * (1-Power));
+  FL.writeMicroseconds(MaxPulse - 1000 * (1 - Power));
+  BL.writeMicroseconds(MaxPulse - 1000 * (1 - Power));
 
-  FR.writeMicroseconds(MaxPulse - 1000 * (1-Power));
-  BR.writeMicroseconds(MaxPulse - 1000 * (1-Power));
+  FR.writeMicroseconds(MaxPulse - 1000 * (1 - Power));
+  BR.writeMicroseconds(MaxPulse - 1000 * (1 - Power));
 }
 
 void RotateCW() {
@@ -29,11 +32,11 @@ void RotateCW() {
 }
 
 void RotateCCW(float Power) {
-  FL.writeMicroseconds(MinPulse + 1000 * (1-Power));
-  BL.writeMicroseconds(MinPulse + 1000 * (1-Power));
+  FL.writeMicroseconds(MinPulse + 1000 * (1 - Power));
+  BL.writeMicroseconds(MinPulse + 1000 * (1 - Power));
 
-  FR.writeMicroseconds(MinPulse + 1000 * (1-Power));
-  BR.writeMicroseconds(MinPulse + 1000 * (1-Power));
+  FR.writeMicroseconds(MinPulse + 1000 * (1 - Power));
+  BR.writeMicroseconds(MinPulse + 1000 * (1 - Power));
 }
 
 void RotateCCW() {
@@ -50,11 +53,11 @@ void RotateCCW() {
 }
 
 void MoveForward(float Power) {
-  FL.writeMicroseconds(MaxPulse - 1000 * (1-Power));
-  BL.writeMicroseconds(MaxPulse - 1000 * (1-Power));
+  FL.writeMicroseconds(MaxPulse - 1000 * (1 - Power));
+  BL.writeMicroseconds(MaxPulse - 1000 * (1 - Power));
 
-  FR.writeMicroseconds(MinPulse + 1000 * (1-Power));
-  BR.writeMicroseconds(MinPulse + 1000 * (1-Power));
+  FR.writeMicroseconds(MinPulse + 1000 * (1 - Power));
+  BR.writeMicroseconds(MinPulse + 1000 * (1 - Power));
 }
 
 void MoveForward() {
@@ -71,11 +74,11 @@ void MoveForward() {
 }
 
 void MoveRight(float Power) {
-  FL.writeMicroseconds(MinPulse + 1000 * (1-Power));
-  BL.writeMicroseconds(MaxPulse - 1000 * (1-Power));
+  FL.writeMicroseconds(MaxPulse - 1000 * (1 - Power));
+  BL.writeMicroseconds(MinPulse + 1000 * (1 - Power));
 
-  FR.writeMicroseconds(MaxPulse - 1000 * (1-Power));
-  BR.writeMicroseconds(MinPulse + 1000 * (1-Power));
+  FR.writeMicroseconds(MaxPulse - 1000 * (1 - Power));
+  BR.writeMicroseconds(MinPulse + 1000 * (1 - Power));
 }
 
 
@@ -95,11 +98,11 @@ void MoveRight() {
 
 void MoveLeft(float Power) {
 
-  FL.writeMicroseconds(MaxPulse - 1000 * (1-Power));
-  BL.writeMicroseconds(MinPulse + 1000 * (1-Power));
+  FL.writeMicroseconds(MinPulse + 1000 * (1 - Power));
+  BL.writeMicroseconds(MaxPulse - 1000 * (1 - Power));
 
-  FR.writeMicroseconds(MinPulse + 1000 * (1-Power));
-  BR.writeMicroseconds(MaxPulse - 1000 * (1-Power));
+  FR.writeMicroseconds(MinPulse + 1000 * (1 - Power));
+  BR.writeMicroseconds(MaxPulse - 1000 * (1 - Power));
 }
 
 void MoveLeft() {
@@ -116,11 +119,11 @@ void MoveLeft() {
 }
 
 void MoveBackward(float Power) {
-  FL.writeMicroseconds(MinPulse + 1000 * (1-Power)); 
-  BL.writeMicroseconds(MinPulse + 1000 * (1-Power));
+  FL.writeMicroseconds(MinPulse + 1000 * (1 - Power));
+  BL.writeMicroseconds(MinPulse + 1000 * (1 - Power));
 
-  FR.writeMicroseconds(MaxPulse - 1000 * (1-Power));
-  BR.writeMicroseconds(MaxPulse - 1000 * (1-Power));
+  FR.writeMicroseconds(MaxPulse - 1000 * (1 - Power));
+  BR.writeMicroseconds(MaxPulse - 1000 * (1 - Power));
 }
 
 void MoveBackward() {
@@ -142,7 +145,7 @@ void MoveBackward() {
 }
 
 void Stop() {
-  brush(true);
+
   FL.writeMicroseconds(Stall);
   BL.writeMicroseconds(Stall);
 
@@ -150,20 +153,39 @@ void Stop() {
   BR.writeMicroseconds(Stall);
 }
 
+
+void AdjustDistance(int Direction, int Speed){
+  switch (Direction) {
+    case Front:
+      MoveForward(Speed);
+      break;
+    case Right:
+      MoveRight(Speed);
+      break;
+    case Back:
+      MoveBackward(Speed);
+      break;
+    case Left:
+      MoveLeft(Speed);
+      break;
+  }
+}
 //
 //
 //    MOVEMENT ADJUST
 //
 //
 
+#define PowerFactor 100 
 
 void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
-  Read_Multi_Sensors();
-  int ClosestWall = GetClosestWall(); 
-  float Power = ReadClosestWall(ClosestWall);
+  ReadClosestWall();
+  int ClosestWall = GetClosestWall();
+  float Power = Side[ClosestWall].SideDif/PowerFactor;
+
   String SideTilt;
 
-  if (Power > 0){
+  if (Power > 0) {
     SideTilt = "CCW";
   } else {
     SideTilt = "CW";
@@ -171,25 +193,25 @@ void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
   //Movement Mapping
 
 
-    Serial.print("Direction = ");
-    Serial.print(Direction);
-    Serial.print(" Now Tilting ");
-    Serial.println(SideTilt);
+  Serial.print("Direction = ");
+  Serial.print(Direction);
+  Serial.print(" Now Tilting ");
+  Serial.println(SideTilt);
 
   if (Direction == "Forward") {
     if (SideTilt == "CCW") {  //tilting left
-      FL.writeMicroseconds(MaxPulse - 1000 * (1-Power));
-      BL.writeMicroseconds(MaxPulse - 1000 * (1-Power));
-    
-      FR.writeMicroseconds(MinPulse );
-      BR.writeMicroseconds(MinPulse );
+      FL.writeMicroseconds(MaxPulse - 1000 * ( Power));
+      BL.writeMicroseconds(MaxPulse - 1000 * (Power));
+
+      FR.writeMicroseconds(MinPulse);
+      BR.writeMicroseconds(MinPulse);
 
     } else if (SideTilt == "CW") {  // tilting right
-      FL.writeMicroseconds(MaxPulse );
-      BL.writeMicroseconds(MaxPulse );
-    
-      FR.writeMicroseconds(MinPulse + 1000 * (1-Power));
-      BR.writeMicroseconds(MinPulse + 1000 * (1-Power));
+      FL.writeMicroseconds(MaxPulse);
+      BL.writeMicroseconds(MaxPulse);
+
+      FR.writeMicroseconds(MinPulse + 1000 * ( Power));
+      BR.writeMicroseconds(MinPulse + 1000 * ( Power));
 
     } else {
       MoveForward();
@@ -198,45 +220,38 @@ void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
   } else if (Direction == "Backward") {
 
     if (SideTilt == "CCW") {  //tilting left
-      FL.writeMicroseconds(MinPulse); 
-      BL.writeMicroseconds(MinPulse );
+      FL.writeMicroseconds(MinPulse);
+      BL.writeMicroseconds(MinPulse);
 
-      FR.writeMicroseconds(MaxPulse - 1000 * (1-Power));
-      BR.writeMicroseconds(MaxPulse - 1000 * (1-Power));
+      FR.writeMicroseconds(MaxPulse - 1000 * ( Power));
+      BR.writeMicroseconds(MaxPulse - 1000 * ( Power));
 
     } else if (SideTilt == "CW") {  // tilting right
-      FL.writeMicroseconds(MinPulse ); 
-      BL.writeMicroseconds(MinPulse );
+      FL.writeMicroseconds(MinPulse);
+      BL.writeMicroseconds(MinPulse);
 
-      FR.writeMicroseconds(MaxPulse - 1000 * (1-Power));
-      BR.writeMicroseconds(MaxPulse - 1000 * (1-Power));
+      FR.writeMicroseconds(MaxPulse - 1000 * ( Power));
+      BR.writeMicroseconds(MaxPulse - 1000 * ( Power));
 
     } else {
       MoveBackward();
     }
   } else if (Direction == "Left") {
     if (SideTilt == "CCW") {  //tilting left
-                              
-                                                                                                /*
-                                                                                                      FL.writeMicroseconds(MaxPulse);
-                                                                                                  BL.writeMicroseconds(MinPulse);
 
-                                                                                                  FR.writeMicroseconds(MaxPulse);
-                                                                                                  BR.writeMicroseconds(MinPulse);
-                                                                                                */
-  
-      FL.writeMicroseconds(MaxPulse - 1000 * (1-Power));
-      BL.writeMicroseconds(MinPulse );
 
-      FR.writeMicroseconds(MinPulse );
-      BR.writeMicroseconds(MaxPulse - 1000 * (1-Power));
+      FL.writeMicroseconds(MaxPulse - 1000 * ( Power));
+      BL.writeMicroseconds(MinPulse);
+
+      FR.writeMicroseconds(MinPulse);
+      BR.writeMicroseconds(MaxPulse - 1000 * ( Power));
 
     } else if (SideTilt == "CW") {  // tilting right
-      FL.writeMicroseconds(MaxPulse );
-      BL.writeMicroseconds(MinPulse + 1000 * (1-Power));
+      FL.writeMicroseconds(MaxPulse);
+      BL.writeMicroseconds(MinPulse + 1000 * ( Power));
 
-      FR.writeMicroseconds(MinPulse + 1000 * (1-Power));
-      BR.writeMicroseconds(MaxPulse );
+      FR.writeMicroseconds(MinPulse + 1000 * ( Power));
+      BR.writeMicroseconds(MaxPulse);
     } else {
       MoveLeft();
     }
@@ -244,18 +259,18 @@ void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
   } else if (Direction == "Right") {
     if (SideTilt == "CCW") {  //tilting left
 
-      FL.writeMicroseconds(MinPulse );
-      BL.writeMicroseconds(MaxPulse - 1000 * (1-Power));
+      FL.writeMicroseconds(MinPulse);
+      BL.writeMicroseconds(MaxPulse - 1000 * ( Power));
 
-      FR.writeMicroseconds(MaxPulse - 1000 * (1-Power));
-      BR.writeMicroseconds(MinPulse );
+      FR.writeMicroseconds(MaxPulse - 1000 * ( Power));
+      BR.writeMicroseconds(MinPulse);
 
     } else if (SideTilt == "CW") {  // tilting right
-      FL.writeMicroseconds(MinPulse + 1000 * (1-Power));
-      BL.writeMicroseconds(MaxPulse );
+      FL.writeMicroseconds(MinPulse + 1000 * ( Power));
+      BL.writeMicroseconds(MaxPulse);
 
-     FR.writeMicroseconds(MaxPulse );
-     BR.writeMicroseconds(MinPulse + 1000 * (1-Power));
+      FR.writeMicroseconds(MaxPulse);
+      BR.writeMicroseconds(MinPulse + 1000 * ( Power));
     } else {
       MoveRight();
     }
@@ -301,7 +316,7 @@ void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
 //   }
 
 //   //TODO:Need to adjust
-//   else if (Direction == "Backward") { 
+//   else if (Direction == "Backward") {
 //     if(Tilt == "cw") {
 //       RotateCW();
 //       delay(75);

@@ -1,5 +1,103 @@
-#pragma once
-#include "Global_Int.h"
+#include "Adafruit_VL53L0X.h"
+
+#define TotalSensors 8
+
+// address we will assign if multi sensor is present
+#define LOX1_ADDRESS 0x30
+#define LOX2_ADDRESS 0x31
+#define LOX3_ADDRESS 0x32
+#define LOX4_ADDRESS 0x33
+#define LOX5_ADDRESS 0x34
+#define LOX6_ADDRESS 0x35
+#define LOX7_ADDRESS 0x36
+#define LOX8_ADDRESS 0x37
+#define LOX9_ADDRESS 0x38
+#define LOX10_ADDRESS 0x39
+
+// set the pins to shutdown
+#define SHT_LOX1 22
+#define SHT_LOX2 23
+#define SHT_LOX3 24
+#define SHT_LOX4 25
+#define SHT_LOX5 28
+#define SHT_LOX6 29
+#define SHT_LOX7 26
+#define SHT_LOX8 27
+#define SHT_LOX9 30
+#define SHT_LOX10 31
+
+#define Front_Right 0
+#define Front_Left 1
+#define Right_Front 2
+#define Right_Back 3
+#define Back_Right 4
+#define Back_Left 5
+#define Left_Front 6
+#define Left_Back 7
+
+
+// objects for the vl53l0x
+Adafruit_VL53L0X lox1 = Adafruit_VL53L0X();
+Adafruit_VL53L0X lox2 = Adafruit_VL53L0X();
+Adafruit_VL53L0X lox3 = Adafruit_VL53L0X();
+Adafruit_VL53L0X lox4 = Adafruit_VL53L0X();
+Adafruit_VL53L0X lox5 = Adafruit_VL53L0X();
+Adafruit_VL53L0X lox6 = Adafruit_VL53L0X();
+Adafruit_VL53L0X lox7 = Adafruit_VL53L0X();
+Adafruit_VL53L0X lox8 = Adafruit_VL53L0X();
+
+
+// this holds the measurement
+VL53L0X_RangingMeasurementData_t measure1;
+VL53L0X_RangingMeasurementData_t measure2;
+VL53L0X_RangingMeasurementData_t measure3;
+VL53L0X_RangingMeasurementData_t measure4;
+VL53L0X_RangingMeasurementData_t measure5;
+VL53L0X_RangingMeasurementData_t measure6;
+VL53L0X_RangingMeasurementData_t measure7;
+VL53L0X_RangingMeasurementData_t measure8;
+
+
+
+
+
+
+
+void DisplayReadings(int Pointer) {  //Displays reading (for degbugging and testing functions) reduces clutter in code and time to run commands
+  switch (Pointer) {
+    case 1:
+
+      Serial.print(F("FrontL:"));
+      Serial.println(Sensor[Front_Left].Distance);
+      Serial.print(F("FrontR:"));
+      Serial.println(Sensor[Front_Right].Distance);
+      Serial.print(F("LeftFront: "));
+      Serial.println(Sensor[Left_Front].Distance);
+      Serial.print(F("LeftBack:"));
+      Serial.println(Sensor[Left_Back].Distance);
+      Serial.print(F("BackL:"));
+      Serial.println(Sensor[Back_Left].Distance);
+      Serial.print(F("BackR:"));
+      Serial.println(Sensor[Back_Right].Distance);
+      Serial.print(F("RightF:"));
+      Serial.println(Sensor[Right_Front].Distance);
+      Serial.print(F("RightBack:"));
+      Serial.println(Sensor[Right_Back].Distance);
+      //Serial.print(F("Bottom Front:"));
+      // Serial.println(Sensor[Under_Front].Distance);
+      // Serial.print(F("Bottom Back:"));
+      // Serial.println(Sensor[Under_Back].Distance);
+      Serial.println();
+      break;
+  }
+}
+
+
+
+
+
+
+
 //functions work :D
 
 void setID() {
@@ -91,163 +189,110 @@ void setID() {
   if (!lox8.begin(LOX8_ADDRESS)) {
     Serial.println(F("Failed to boot eigth VL53L0X"));
   }
-
-  // activating LOX8
-  digitalWrite(SHT_LOX9, HIGH);
-  delay(10);
-
-  //initing LOX8
-  if (!lox9.begin(LOX9_ADDRESS)) {
-    Serial.println(F("Failed to boot ninth VL53L0X"));
-  }
-
-  // activating LOX8
-  digitalWrite(SHT_LOX10, HIGH);
-  delay(10);
-
-  //initing LOX8
-  if (!lox10.begin(LOX10_ADDRESS)) {
-    Serial.println(F("Failed to boot tenth VL53L0X"));
-  }
 }
 
-void read_multi_sensors() {
-
-  lox1.rangingTest(&measure1, false);    // pass in 'true' to get debug data printout!
-  lox2.rangingTest(&measure2, false);    // pass in 'true' to get debug data printout!
-  lox3.rangingTest(&measure3, false);    // pass in 'true' to get debug data printout!
-  lox4.rangingTest(&measure4, false);    // pass in 'true' to get debug data printout!
-  lox5.rangingTest(&measure5, false);    // pass in 'true' to get debug data printout!
-  lox6.rangingTest(&measure6, false);    // pass in 'true' to get debug data printout!
-  lox7.rangingTest(&measure7, false);    // pass in 'true' to get debug data printout!
-  lox8.rangingTest(&measure8, false);    // pass in 'true' to get debug data printout!
-  lox9.rangingTest(&measure9, false);    // pass in 'true' to get debug data printout!
-  lox10.rangingTest(&measure10, false);  // pass in 'true' to get debug data printout!
-
-
-  // print sensor one reading
-
-  if (measure1.RangeStatus != 4) {  // if not out of range
-    Sensor[Front_Right].Distance = measure1.RangeMilliMeter;
-  }
-
-  // print sensor two reading
-  if (measure2.RangeStatus != 4) {
-    Sensor[Front_Left].Distance = measure2.RangeMilliMeter * 1.2;
-  }
-  // print sensor three reading
-  if (measure3.RangeStatus != 4) {
-    Sensor[Left_Front].Distance = measure3.RangeMilliMeter;
-  }
-  // print sensor four reading
-  if (measure4.RangeStatus != 4) {
-    Sensor[Left_Back].Distance = measure4.RangeMilliMeter;
-  }
-  Serial.print(F(" "));
-  // print sensor five reading
-  if (measure5.RangeStatus != 4) {
-    Sensor[Back_Left].Distance = measure5.RangeMilliMeter;
-  }
-  // print sensor six reading
-  if (measure6.RangeStatus != 4) {
-    Sensor[Back_Right].Distance = measure6.RangeMilliMeter;
-  }
-  // print sensor seven reading
-  if (measure7.RangeStatus != 4) {
-    Sensor[Right_Front].Distance = measure7.RangeMilliMeter;
-  }
-  // print sensor eight reading
-  if (measure8.RangeStatus != 4) {
-    Sensor[Right_Back].Distance = measure8.RangeMilliMeter;
-  }
-  // print sensor eight reading
-  if (measure9.RangeStatus != 4) {
-    Sensor[Under_Front].Distance = measure9.RangeMilliMeter;
-  }
-  // print sensor eight reading
-  if (measure10.RangeStatus != 4) {
-    Sensor[Under_Back].Distance = measure10.RangeMilliMeter;
-  }
-}
-
-void read_single_sensor(int SensorPointer) {
+void read_single_sensor(int SensorPointer) {  // Reads single sensor
   switch (SensorPointer) {
     case 0:
-      lox1.rangingTest(&measure1, false);  // pass in 'true' to get debug data printout!
-      if (measure1.RangeStatus != 4) {     // if not out of range
-        Sensor[Front_Right].Distance = measure1.RangeMilliMeter;
+      lox1.rangingTest(&measure1, false);                        // pass in 'true' to get debug data printout!
+      if (measure1.RangeStatus != 4) {                           // if not out of range
+        Sensor[Front_Left].Distance = measure1.RangeMilliMeter;  //Front Left
+      } else {
+        Sensor[Front_Left].Distance = 1000;
+      }
+      if (Sensor[Front_Left].Distance > 1000) {  // sets limit of 1000 mm
+        Sensor[Front_Left].Distance = 1000;
       }
       break;
 
     case 1:
-      lox2.rangingTest(&measure2, false);  // pass in 'true' to get debug data printout!
-      if (measure2.RangeStatus != 4) {     // if not out of range
-        Sensor[Front_Left].Distance = measure2.RangeMilliMeter - 12;
+      lox2.rangingTest(&measure2, false);                        // pass in 'true' to get debug data printout!
+      if (measure2.RangeStatus != 4) {                           // if not out of range
+        Sensor[Left_Front].Distance = measure2.RangeMilliMeter;  //Left Front
+      } else {
+        Sensor[Left_Front].Distance = 1000;
+      }
+      if (Sensor[Left_Front].Distance > 1000) {  // sets limit of 1000 mm
+        Sensor[Left_Front].Distance = 1000;
       }
       break;
 
     case 2:
-      lox3.rangingTest(&measure3, false);  // pass in 'true' to get debug data printout!
-      if (measure3.RangeStatus != 4) {     // if not out of range
-        Sensor[Left_Front].Distance = measure3.RangeMilliMeter;
+      lox3.rangingTest(&measure3, false);                       // pass in 'true' to get debug data printout!
+      if (measure3.RangeStatus != 4) {                          // if not out of range
+        Sensor[Left_Back].Distance = measure3.RangeMilliMeter;  //Left Back
+      } else {
+        Sensor[Left_Back].Distance = 1000;
       }
+      if (Sensor[Left_Back].Distance > 1000) {  // sets limit of 1000 mm
+        Sensor[Left_Back].Distance = 1000;
+      }
+
       break;
 
     case 3:
-      lox4.rangingTest(&measure4, false);  // pass in 'true' to get debug data printout!
-      if (measure4.RangeStatus != 4) {     // if not out of range
-        Sensor[Left_Back].Distance = measure4.RangeMilliMeter;
+      lox4.rangingTest(&measure4, false);                       // pass in 'true' to get debug data printout!
+      if (measure4.RangeStatus != 4) {                          // if not out of range
+        Sensor[Back_Left].Distance = measure4.RangeMilliMeter;  //Back Left
       } else {
-        Sensor[Left_Back].Distance = 9999;
+        Sensor[Back_Left].Distance = 1000;
+      }
+      if (Sensor[Back_Left].Distance > 1000) {  // sets limit of 1000 mm
+        Sensor[Back_Left].Distance = 1000;
       }
       break;
 
     case 4:
-      lox5.rangingTest(&measure5, false);  // pass in 'true' to get debug data printout!
-      if (measure5.RangeStatus != 4) {     // if not out of range
-        Sensor[Right_Front].Distance = measure5.RangeMilliMeter;
+      lox5.rangingTest(&measure5, false);                         // pass in 'true' to get debug data printout!
+      if (measure5.RangeStatus != 4) {                            // if not out of range
+        Sensor[Right_Front].Distance = measure5.RangeMilliMeter;  //Right Front
+      } else {
+        Sensor[Right_Front].Distance = 1000;
+      }
+      if (Sensor[Right_Front].Distance > 1000) {  // sets limit of 1000 mm
+        Sensor[Right_Front].Distance = 1000;
       }
       break;
 
     case 5:
-      lox6.rangingTest(&measure6, false);  // pass in 'true' to get debug data printout!
-      if (measure6.RangeStatus != 4) {     // if not out of range
-        Sensor[Right_Back].Distance = measure6.RangeMilliMeter;
+      lox6.rangingTest(&measure6, false);                         // pass in 'true' to get debug data printout!
+      if (measure6.RangeStatus != 4) {                            // if not out of range
+        Sensor[Front_Right].Distance = measure6.RangeMilliMeter;  //Front Right
+      } else {
+        Sensor[Front_Right].Distance = 1000;
+      }
+      if (Sensor[Front_Right].Distance > 1000) {  // sets limit of 1000 mm
+        Sensor[Front_Right].Distance = 1000;
       }
       break;
 
     case 6:
-      lox7.rangingTest(&measure7, false);  // pass in 'true' to get debug data printout!
-      if (measure7.RangeStatus != 4) {     // if not out of range
-        Sensor[Back_Right].Distance = measure7.RangeMilliMeter;
+      lox7.rangingTest(&measure7, false);                        // pass in 'true' to get debug data printout!
+      if (measure7.RangeStatus != 4) {                           // if not out of range
+        Sensor[Back_Right].Distance = measure7.RangeMilliMeter;  //Back Right
       } else {
-        Sensor[Back_Right].Distance = 9999;
+        Sensor[Back_Right].Distance = 1000;
+      }
+      if (Sensor[Back_Right].Distance > 1000) {  // sets limit of 1000 mm
+        Sensor[Back_Right].Distance = 1000;
       }
       break;
 
     case 7:
-      lox8.rangingTest(&measure8, false);  // pass in 'true' to get debug data printout!
-      if (measure8.RangeStatus != 4) {     // if not out of range
-        Sensor[Back_Left].Distance = measure8.RangeMilliMeter;
+      lox8.rangingTest(&measure8, false);                        // pass in 'true' to get debug data printout!
+      if (measure8.RangeStatus != 4) {                           // if not out of range
+        Sensor[Right_Back].Distance = measure8.RangeMilliMeter;  //Right Back
+      } else {
+        Sensor[Right_Back].Distance = 1000;
       }
-      break;
-
-    case 8:
-      lox9.rangingTest(&measure9, false);  // pass in 'true' to get debug data printout!
-      if (measure9.RangeStatus != 4) {     // if not out of range
-        Sensor[Under_Front].Distance = measure9.RangeMilliMeter;
-      }
-      break;
-
-    case 9:
-      lox10.rangingTest(&measure10, false);  // pass in 'true' to get debug data printout!
-      if (measure10.RangeStatus != 4) {      // if not out of range
-        Sensor[Under_Back].Distance = measure10.RangeMilliMeter;
+      if (Sensor[Right_Back].Distance > 1000) {  // sets limit of 1000 mm
+        Sensor[Right_Back].Distance = 1000;
       }
       break;
   }
 }
-void Read_Multi_Sensors() {
+
+void Read_Multi_Sensors() { //reads all sensors
 
   read_single_sensor(Front_Left);
   read_single_sensor(Front_Right);
@@ -257,8 +302,25 @@ void Read_Multi_Sensors() {
   read_single_sensor(Left_Back);
   read_single_sensor(Back_Right);
   read_single_sensor(Back_Left);
-  read_single_sensor(Under_Front);
-  read_single_sensor(Under_Back);
+  UpdateDistance(Front);
+  UpdateDistance(Right);
+  UpdateDistance(Back);
+  UpdateDistance(Left);
+}
+
+void Read_Side(int ReadingSide){
+  read_single_sensor(ReadingSide);
+  read_single_sensor(ReadingSide + 1);
+  UpdateDistance(ReadingSide);
+  DisplayClosestSideReadings(ReadingSide, Debug);
+}
+
+void UpdateDistance(int SensorSide){
+  Side[SensorSide].LDist = Sensor[SensorSide].Distance;
+  Side[SensorSide].RDist = Sensor[SensorSide + 1].Distance;
+  Side[SensorSide].AvgDist = (Sensor[SensorSide].Distance + Sensor[SensorSide + 1].Distance)/2;
+  Side[SensorSide].SideDif = Sensor[SensorSide].Distance - Sensor[SensorSide + 1].Distance;
+  
 }
 
 void SetupSensors() {
@@ -284,8 +346,6 @@ void DisableSensors() {
   digitalWrite(SHT_LOX6, LOW);
   digitalWrite(SHT_LOX7, LOW);
   digitalWrite(SHT_LOX8, LOW);
-  digitalWrite(SHT_LOX9, LOW);
-  digitalWrite(SHT_LOX10, LOW);
 }
 
 void EnableSensors() {
@@ -297,10 +357,9 @@ void EnableSensors() {
   pinMode(SHT_LOX6, OUTPUT);
   pinMode(SHT_LOX7, OUTPUT);
   pinMode(SHT_LOX8, OUTPUT);
-  pinMode(SHT_LOX9, OUTPUT);
-  pinMode(SHT_LOX10, OUTPUT);
 }
 
+/*
 void FindTilt(float Distance1, float Distance2) {  //Gets tilt from sensor readings
 
   SideDif = Distance1 - Distance2;
@@ -315,141 +374,4 @@ void FindTilt(float Distance1, float Distance2) {  //Gets tilt from sensor readi
     SideTilt = "Even";
   }
 }
-
-
-//NEEDS TESTING
-bool DetectLocation(int Location) {
-  bool InPosition = false;
-  switch (Location) {
-    case Package_Delivery_Site:  //Package_Delivery_Site
-      read_single_sensor(Front_Right);
-      read_single_sensor(Left_Back);
-      read_single_sensor(Back_Right);
-      read_single_sensor(Right_Front);
-      read_single_sensor(Back_Left);
-      while (Sensor[Right_Front].Distance <= 90){
-        read_single_sensor(Right_Front);
-        MoveLeft();
-      } 
-      while (Sensor[Right_Front].Distance >= 150){
-        read_single_sensor(Right_Front);
-        MoveRight();
-      }
-
-
-      if ((Sensor[Front_Right].Distance <= 210) && (Sensor[Left_Back].Distance >= 500) && ((Sensor[Back_Right].Distance <= 600) && (Sensor[Back_Right].Distance >= 150)) && ((Sensor[Back_Left].Distance <= 600) && (Sensor[Back_Left].Distance >= 150))) {  //if front sensors are close to the front wall and left sensors are further than usual we have hit the first wall
-        read_single_sensor(Right_Front);
-        Serial.println("Close to First Corner");
-
-        if (Sensor[Right_Front].Distance >= 100) {  //if we are close to first corner but too far from right side wall move closer to the wall
-          Serial.println("Robot is near first corner but far from right wall!!!");
-          while (Sensor[Right_Front].Distance >= 150) {
-            read_single_sensor(Right_Front);
-            // read_single_sensor(Right_Back);
-            DisplayReadings(1);
-            MoveRight();
-          }
-        }
-
-
-        Serial.println("Robot is now in posiiton to Deliver Packages!");
-        Stop();  //now in position
-        InPosition = true;
-      }
-      //}
-      break;
-
-    case Fuel_Tank_Pickup:  //Fuel_Tank_Pickup
-      read_single_sensor(Front_Right);
-      read_single_sensor(Left_Back);
-      Serial.print("Front Right Distance ");
-      Serial.println(Sensor[Front_Right].Distance);
-      while (Sensor[Front_Right].Distance <= 190) {
-        read_single_sensor(Front_Right);
-        Serial.println("Too close to wall");
-        MoveBackward();
-      }
-      while (Sensor[Front_Right].Distance >= 250) {
-        read_single_sensor(Front_Right);
-        Serial.println("Too far from wall");
-        MoveForward();
-      }
-      if (Sensor[Left_Back].Distance <= 175) {
-        if ((Sensor[Front_Right].Distance < 250) && ((Sensor[Front_Right].Distance >= 190))) {
-          Serial.println("Robot is now in posiiton to pick up fuel tanks!");
-          Stop();  //now in position
-          InPosition = true;
-        }
-      }
-      break;
-
-    case Trench_Start:  //Trench_Start
-      read_single_sensor(Under_Front);
-      if (Sensor[Under_Front].Distance >= 130) {  //if front under sensor is detecting a distance further away than usual
-        Stop();
-        InPosition = true;
-      }
-
-      break;
-
-    case Tench_Middle:  //Tench_Middle
-      read_single_sensor(Under_Back);
-      if (Sensor[Under_Back].Distance >= 130) {  //if front under sensor is detecting a distance further away than usual
-        Stop();
-        InPosition = true;
-      }
-
-      break;
-
-    case Tench_End:  //Tench_End
-      read_single_sensor(Under_Back);
-      if (Sensor[Under_Back].Distance >= 80) {  //if front under sensor is detecting a distance further away than usual
-        Stop();
-        InPosition = true;
-      }
-
-      break;
-
-    case Rocket_Assembly:  //Rocket_Assembly
-      read_single_sensor(Back_Right);
-      read_single_sensor(Right_Front);
-      read_single_sensor(Front_Right);
-
-      if (Sensor[Back_Right].Distance <= 150 && Sensor[Front_Right].Distance <= 500) {
-        if (Sensor[Right_Front].Distance <= 120) {  //In position
-          Stop();
-          InPosition = true;
-        } else {  //close to front wall but too far from Left wall (Robot is facing backwards)
-          while (Sensor[Right_Front].Distance >= 120) {
-            read_single_sensor(Right_Front);
-            MoveRight();
-          }
-          Stop();
-          InPosition = true;
-        }
-      } else if (Sensor[Right_Front].Distance <= 90) {
-        MoveLeft();
-      } else if (Sensor[Right_Front].Distance >= 150) {
-        MoveRight();
-      } else if (Sensor[Back_Right].Distance <= 100) {
-        MoveForward();
-      }
-
-
-      break;
-
-    case Button:  //Button
-      read_single_sensor(Front_Left);
-      read_single_sensor(Left_Back);
-      if (Sensor[Front_Right].Distance <= 200) {
-      }
-
-
-      break;
-
-    default:
-      InPosition = false;
-      break;
-  }
-  return InPosition;
-}
+*/
