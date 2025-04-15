@@ -154,7 +154,7 @@ void Stop() {
 }
 
 
-void AdjustDistance(int Direction, int Speed){
+void AdjustDistance(int Direction, float Speed) {
   switch (Direction) {
     case Front:
       MoveForward(Speed);
@@ -176,12 +176,12 @@ void AdjustDistance(int Direction, int Speed){
 //
 //
 
-#define PowerFactor 100 
+#define PowerFactor 100
 
 void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
   ReadClosestWall();
   int ClosestWall = GetClosestWall();
-  float Power = Side[ClosestWall].SideDif/PowerFactor;
+  float Power = Side[ClosestWall].SideDif / PowerFactor;
 
   String SideTilt;
 
@@ -200,7 +200,7 @@ void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
 
   if (Direction == "Forward") {
     if (SideTilt == "CCW") {  //tilting left
-      FL.writeMicroseconds(MaxPulse - 1000 * ( Power));
+      FL.writeMicroseconds(MaxPulse - 1000 * (Power));
       BL.writeMicroseconds(MaxPulse - 1000 * (Power));
 
       FR.writeMicroseconds(MinPulse);
@@ -210,8 +210,8 @@ void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
       FL.writeMicroseconds(MaxPulse);
       BL.writeMicroseconds(MaxPulse);
 
-      FR.writeMicroseconds(MinPulse + 1000 * ( Power));
-      BR.writeMicroseconds(MinPulse + 1000 * ( Power));
+      FR.writeMicroseconds(MinPulse + 1000 * (Power));
+      BR.writeMicroseconds(MinPulse + 1000 * (Power));
 
     } else {
       MoveForward();
@@ -223,15 +223,15 @@ void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
       FL.writeMicroseconds(MinPulse);
       BL.writeMicroseconds(MinPulse);
 
-      FR.writeMicroseconds(MaxPulse - 1000 * ( Power));
-      BR.writeMicroseconds(MaxPulse - 1000 * ( Power));
+      FR.writeMicroseconds(MaxPulse - 1000 * (Power));
+      BR.writeMicroseconds(MaxPulse - 1000 * (Power));
 
     } else if (SideTilt == "CW") {  // tilting right
       FL.writeMicroseconds(MinPulse);
       BL.writeMicroseconds(MinPulse);
 
-      FR.writeMicroseconds(MaxPulse - 1000 * ( Power));
-      BR.writeMicroseconds(MaxPulse - 1000 * ( Power));
+      FR.writeMicroseconds(MaxPulse - 1000 * (Power));
+      BR.writeMicroseconds(MaxPulse - 1000 * (Power));
 
     } else {
       MoveBackward();
@@ -240,17 +240,17 @@ void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
     if (SideTilt == "CCW") {  //tilting left
 
 
-      FL.writeMicroseconds(MaxPulse - 1000 * ( Power));
+      FL.writeMicroseconds(MaxPulse - 1000 * (Power));
       BL.writeMicroseconds(MinPulse);
 
       FR.writeMicroseconds(MinPulse);
-      BR.writeMicroseconds(MaxPulse - 1000 * ( Power));
+      BR.writeMicroseconds(MaxPulse - 1000 * (Power));
 
     } else if (SideTilt == "CW") {  // tilting right
       FL.writeMicroseconds(MaxPulse);
-      BL.writeMicroseconds(MinPulse + 1000 * ( Power));
+      BL.writeMicroseconds(MinPulse + 1000 * (Power));
 
-      FR.writeMicroseconds(MinPulse + 1000 * ( Power));
+      FR.writeMicroseconds(MinPulse + 1000 * (Power));
       BR.writeMicroseconds(MaxPulse);
     } else {
       MoveLeft();
@@ -260,17 +260,17 @@ void Movement_Adjust(String Direction) {  //NEEDS TO BE TESTED
     if (SideTilt == "CCW") {  //tilting left
 
       FL.writeMicroseconds(MinPulse);
-      BL.writeMicroseconds(MaxPulse - 1000 * ( Power));
+      BL.writeMicroseconds(MaxPulse - 1000 * (Power));
 
-      FR.writeMicroseconds(MaxPulse - 1000 * ( Power));
+      FR.writeMicroseconds(MaxPulse - 1000 * (Power));
       BR.writeMicroseconds(MinPulse);
 
     } else if (SideTilt == "CW") {  // tilting right
-      FL.writeMicroseconds(MinPulse + 1000 * ( Power));
+      FL.writeMicroseconds(MinPulse + 1000 * (Power));
       BL.writeMicroseconds(MaxPulse);
 
       FR.writeMicroseconds(MaxPulse);
-      BR.writeMicroseconds(MinPulse + 1000 * ( Power));
+      BR.writeMicroseconds(MinPulse + 1000 * (Power));
     } else {
       MoveRight();
     }

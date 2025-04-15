@@ -158,7 +158,7 @@ void CheckForMagnet() {  //Checks for Magnetic Field
 #define NonMagnetic 0
 
 int CheckShippingContainerPosition() {  //checks where shipping container is located
-  Read_Multi_Sensors();
+  Read_Side(Back);
 
   Serial.print("Back Right ");
   Serial.println(Sensor[Back_Right].Distance);
@@ -325,7 +325,7 @@ int GetClosestWall() {           //gets closest wall direction
 
 void ReadClosestWall() {  //Output Side needed to rotate
   int ClosestDirection = GetClosestWall();
-  Serial.print("Reading ");
+  Serial.print("Reading Closest Side ");
   Serial.println(OutputSideName(ClosestDirection));
   Read_Side(ClosestDirection);
 }
@@ -373,53 +373,72 @@ void CheckForTurn(int rotation) {
   ChangeDirection(rotation);
 }
 
+void RamWall(int Direction){
+  AdjustDistance(Direction,0.5);  //Move into wall
+  delay(1000);
+  AdjustDistance(OutputDirection(Direction + 2), 0.5); //Move Away From Wall 
+  delay(250);
+  Stop();
+}
+
+#define LineMoveTolerance 25    //Within Line Tolerance
+
 void LineMove(int ReadSide, int DesiredDistance, float Speed) {  //When Going Straight and Movement Adjust Doesnt work, look at the sensors perpendicular to our movement and move to fit within the distance
   Read_Side(ReadSide);
-  if (Side[ReadSide].AvgDist < DesiredDistance) {
+  if (Side[ReadSide].AvgDist < DesiredDistance - LineMoveTolerance) {
     AdjustDistance(OutputDirection(ReadSide + 2), Speed);
     delay(100);
-  } else if (Side[ReadSide].AvgDist < DesiredDistance) {
+  } else if (Side[ReadSide].AvgDist > DesiredDistance + LineMoveTolerance && Side[ReadSide].AvgDist < 700) {
     AdjustDistance(ReadSide, Speed);
     delay(100);
+  } else {
+    Serial.println("Distance too far to read, Line Move will not change robot movement ");
   }
 }
 
 
 
 void CheckForWallCollisions() {
-  Read_Multi_Sensors();
+  Read_Side(Front);
   if (!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)) {
     MoveBackward(.2);
     while (!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)) {
-      read_single_sensor(Front_Left);   //May not need to remeasure if it does it already in the while loop
-      read_single_sensor(Front_Right);  //how resource intensive is this? will re-reading take too long?
+      Read_Side(Front);
+      // read_single_sensor(Front_Left);   //May not need to remeasure if it does it already in the while loop
+      // read_single_sensor(Front_Right);  //how resource intensive is this? will re-reading take too long?
     }
     Stop();
   }
+  Read_Side(Left);
   //if left sensors in range, move right until safe distance away
   if (!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)) {
     MoveRight(.2);
     while (!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)) {
-      read_single_sensor(Left_Front);  //May not need to remeasure if it does it already in the while loop
-      read_single_sensor(Left_Back);   //how resource intensive is this? will re-reading take too long?
+      Read_Side(Left);
+      // read_single_sensor(Left_Front);  //May not need to remeasure if it does it already in the while loop
+      // read_single_sensor(Left_Back);   //how resource intensive is this? will re-reading take too long?
     }
     Stop();
   }
+  Read_Side(Right);
   //if right sensors in range, move left until safe distance away
   if (!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)) {
     MoveLeft(.2);
     while (!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)) {
-      read_single_sensor(Right_Front);  //May not need to remeasure if it does it already in the while loop
-      read_single_sensor(Right_Back);   //how resource intensive is this? will re-reading take too long?
+      Read_Side(Right);
+      // read_single_sensor(Right_Front);  //May not need to remeasure if it does it already in the while loop
+      // read_single_sensor(Right_Back);   //how resource intensive is this? will re-reading take too long?
     }
     Stop();
   }
+  Read_Side(Back);
   //if back sensors in range, move forward until safe distance away
   if (!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)) {
     MoveForward(.2);
     while (!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)) {
-      read_single_sensor(Back_Left);   //May not need to remeasure if it does it already in the while loop
-      read_single_sensor(Back_Right);  //how resource intensive is this? will re-reading take too long?
+      Read_Side(Back);
+      // read_single_sensor(Back_Left);   //May not need to remeasure if it does it already in the while loop
+      // read_single_sensor(Back_Right);  //how resource intensive is this? will re-reading take too long?
     }
     Stop();
   }

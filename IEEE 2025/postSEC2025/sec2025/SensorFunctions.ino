@@ -26,14 +26,14 @@
 #define SHT_LOX9 30
 #define SHT_LOX10 31
 
-#define Front_Right 0
-#define Front_Left 1
+#define Front_Left 0
+#define Front_Right 1
 #define Right_Front 2
 #define Right_Back 3
-#define Back_Right 4
-#define Back_Left 5
-#define Left_Front 6
-#define Left_Back 7
+#define Back_Left 4
+#define Back_Right 5
+#define Left_Back 6
+#define Left_Front 7
 
 
 // objects for the vl53l0x
@@ -193,7 +193,7 @@ void setID() {
 
 void read_single_sensor(int SensorPointer) {  // Reads single sensor
   switch (SensorPointer) {
-    case 0:
+    case Front_Left:
       lox1.rangingTest(&measure1, false);                        // pass in 'true' to get debug data printout!
       if (measure1.RangeStatus != 4) {                           // if not out of range
         Sensor[Front_Left].Distance = measure1.RangeMilliMeter;  //Front Left
@@ -205,7 +205,7 @@ void read_single_sensor(int SensorPointer) {  // Reads single sensor
       }
       break;
 
-    case 1:
+    case Left_Front:
       lox2.rangingTest(&measure2, false);                        // pass in 'true' to get debug data printout!
       if (measure2.RangeStatus != 4) {                           // if not out of range
         Sensor[Left_Front].Distance = measure2.RangeMilliMeter;  //Left Front
@@ -217,7 +217,7 @@ void read_single_sensor(int SensorPointer) {  // Reads single sensor
       }
       break;
 
-    case 2:
+    case Left_Back:
       lox3.rangingTest(&measure3, false);                       // pass in 'true' to get debug data printout!
       if (measure3.RangeStatus != 4) {                          // if not out of range
         Sensor[Left_Back].Distance = measure3.RangeMilliMeter;  //Left Back
@@ -230,7 +230,7 @@ void read_single_sensor(int SensorPointer) {  // Reads single sensor
 
       break;
 
-    case 3:
+    case Back_Left:
       lox4.rangingTest(&measure4, false);                       // pass in 'true' to get debug data printout!
       if (measure4.RangeStatus != 4) {                          // if not out of range
         Sensor[Back_Left].Distance = measure4.RangeMilliMeter;  //Back Left
@@ -242,7 +242,7 @@ void read_single_sensor(int SensorPointer) {  // Reads single sensor
       }
       break;
 
-    case 4:
+    case Right_Front:
       lox5.rangingTest(&measure5, false);                         // pass in 'true' to get debug data printout!
       if (measure5.RangeStatus != 4) {                            // if not out of range
         Sensor[Right_Front].Distance = measure5.RangeMilliMeter;  //Right Front
@@ -254,7 +254,7 @@ void read_single_sensor(int SensorPointer) {  // Reads single sensor
       }
       break;
 
-    case 5:
+    case Front_Right:
       lox6.rangingTest(&measure6, false);                         // pass in 'true' to get debug data printout!
       if (measure6.RangeStatus != 4) {                            // if not out of range
         Sensor[Front_Right].Distance = measure6.RangeMilliMeter;  //Front Right
@@ -266,7 +266,7 @@ void read_single_sensor(int SensorPointer) {  // Reads single sensor
       }
       break;
 
-    case 6:
+    case Back_Right:
       lox7.rangingTest(&measure7, false);                        // pass in 'true' to get debug data printout!
       if (measure7.RangeStatus != 4) {                           // if not out of range
         Sensor[Back_Right].Distance = measure7.RangeMilliMeter;  //Back Right
@@ -278,7 +278,7 @@ void read_single_sensor(int SensorPointer) {  // Reads single sensor
       }
       break;
 
-    case 7:
+    case Right_Back:
       lox8.rangingTest(&measure8, false);                        // pass in 'true' to get debug data printout!
       if (measure8.RangeStatus != 4) {                           // if not out of range
         Sensor[Right_Back].Distance = measure8.RangeMilliMeter;  //Right Back
@@ -309,17 +309,21 @@ void Read_Multi_Sensors() { //reads all sensors
 }
 
 void Read_Side(int ReadingSide){
-  read_single_sensor(ReadingSide);
-  read_single_sensor(ReadingSide + 1);
+  Serial.print("Reading Side ");
+  Serial.print(ReadingSide*2);
+  Serial.print(" and ");
+  Serial.println(ReadingSide*2 + 1);
+  read_single_sensor(ReadingSide*2);
+  read_single_sensor(ReadingSide*2 + 1);
   UpdateDistance(ReadingSide);
   DisplayClosestSideReadings(ReadingSide, Debug);
 }
 
 void UpdateDistance(int SensorSide){
-  Side[SensorSide].LDist = Sensor[SensorSide].Distance;
-  Side[SensorSide].RDist = Sensor[SensorSide + 1].Distance;
-  Side[SensorSide].AvgDist = (Sensor[SensorSide].Distance + Sensor[SensorSide + 1].Distance)/2;
-  Side[SensorSide].SideDif = Sensor[SensorSide].Distance - Sensor[SensorSide + 1].Distance;
+  Side[SensorSide].LDist = Sensor[SensorSide*2].Distance;
+  Side[SensorSide].RDist = Sensor[SensorSide*2 + 1].Distance;
+  Side[SensorSide].AvgDist = (Sensor[SensorSide*2].Distance + Sensor[SensorSide*2 + 1].Distance)/2;
+  Side[SensorSide].SideDif = Sensor[SensorSide*2].Distance - Sensor[SensorSide*2 + 1].Distance;
   
 }
 

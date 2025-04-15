@@ -28,7 +28,7 @@ int LightAverage(const int pin) {
 }
 
 // senses for 5 seconds changes in light levels, then it continues with rest of following robot functions
-int SenseLight(const int photoRpin) {
+void SenseLight(const int photoRpin) {
   // initialize while loop variable and timeout for function
   bool loopFlag = 0;
   const unsigned long period = 10000;    // how long the program will run for max
