@@ -157,19 +157,24 @@ void Stop() {
 void AdjustDistance(int Direction, float Speed) {
   switch (Direction) {
     case Front:
+      Serial.println(" Adjust Distance = Forward");
       MoveForward(Speed);
       break;
     case Right:
+      Serial.println(" Adjust Distance = Right");
       MoveRight(Speed);
       break;
     case Back:
+      Serial.println(" Adjust Distance = Back");
       MoveBackward(Speed);
       break;
     case Left:
+      Serial.println(" Adjust Distance = Left");
       MoveLeft(Speed);
       break;
   }
 }
+
 //
 //
 //    MOVEMENT ADJUST

@@ -11,14 +11,14 @@ Servo FL;
 
 #define TotalSensors 8
 
-#define Front_Right 0
-#define Front_Left 1
+#define Front_Left 0
+#define Front_Right 1
 #define Right_Front 2
 #define Right_Back 3
-#define Back_Right 4
-#define Back_Left 5
-#define Left_Front 6
-#define Left_Back 7
+#define Back_Left 4
+#define Back_Right 5
+#define Left_Back 6
+#define Left_Front 7
 
 //TOF information
 typedef struct {
@@ -123,6 +123,6 @@ int ClosestWall = South;
 //     back
 
 //figure out the distance away from wall to safely rotate without hitting it
-#define safeDistanceAway 150
+#define safeDistanceAway 100
 //figure out the factor which converts angle degrees to delay time while rotating
 #define delayScalingFactor 19

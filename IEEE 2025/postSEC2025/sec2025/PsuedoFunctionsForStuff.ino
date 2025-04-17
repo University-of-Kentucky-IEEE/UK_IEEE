@@ -183,6 +183,34 @@ int CheckShippingContainerPosition() {  //checks where shipping container is loc
   }
 }
 
+bool MoveShippingToShippingContainer(int MoveToSide){
+  Read_Side(Back);
+  if (MoveToSide == ContainerOnRightSide){
+    MoveLeft(0.2);
+  }
+  if (MoveToSide == ContainerOnLeftSide){
+    MoveRight(0.2);
+  }
+  if (MoveToSide == ContainerInMiddle){
+    int CurrentPosition = CheckShippingContainerPosition();
+    if (CurrentPosition == ContainerOnRightSide){
+      MoveRight(0.2);
+    } else  if (CurrentPosition == ContainerOnLeftSide){
+      MoveLeft(0.2);
+    } else {
+      Stop();
+    }
+  }
+
+  if (MoveToSide == CheckShippingContainerPosition()){
+    return true;
+  } else {
+    return false;
+  }
+
+}
+
+
 void DepositGeodes(bool magnetic) {   //ONLY USE IF WE KNOW WHERE SHIPPING CONTAINER IS
   float DepositStartTime = millis();  //Safety Excape incase of inf loop
   bool Deposited = false;
@@ -330,8 +358,6 @@ void ReadClosestWall() {  //Output Side needed to rotate
   Read_Side(ClosestDirection);
 }
 
-
-
 void CheckForTurn(int rotation) {
   CheckForWallCollisions();
   Stop();
@@ -351,44 +377,53 @@ void CheckForTurn(int rotation) {
       Serial.println("Rotating CCW");
       RotateCCW(0.2);
   }
+  Serial.print("Closest Side = ");
+  Serial.println(ClosestWall);
+  delay(1500);
+  Read_Side(ClosestWall);
 
-  delay(1700);
-  ReadClosestWall();
+
   int PreviousSideDif = Side[ClosestWall].SideDif;
 
   while (!InPosition) {
     PreviousSideDif = Side[ClosestWall].SideDif;
-    ReadClosestWall();
-
+    Read_Side(ClosestWall);
     Serial.print("DistanceDiffFronWall ");
     Serial.println(Side[ClosestWall].SideDif);
-
-    if (Side[ClosestWall].SideDif < 50 || (PreviousSideDif > Side[ClosestWall].SideDif)) {  // stops turning if the dif is getting larger or if dif is small enough
+    //Side[ClosestWall].SideDif < 50 ||
+    if ((abs(PreviousSideDif) > abs(Side[ClosestWall].SideDif))) {  // stops turning if the dif is getting larger or if dif is small enough
       Serial.println("Fully Turned");
       Stop();
       delay(2500);
+      InPosition = true;
     }
   }
-
+  Serial.println("Fully Turned");
+  Stop();
+  delay(2500);
+  InPosition = true;
   ChangeDirection(rotation);
 }
 
-void RamWall(int Direction){
-  AdjustDistance(Direction,0.5);  //Move into wall
+void RamWall(int Direction) {
+  AdjustDistance(Direction, 0.5);  //Move into wall
   delay(1000);
-  AdjustDistance(OutputDirection(Direction + 2), 0.5); //Move Away From Wall 
+  AdjustDistance(OutputDirection(Direction + 2), 0.5);  //Move Away From Wall
   delay(250);
   Stop();
 }
 
-#define LineMoveTolerance 25    //Within Line Tolerance
+#define LineMoveTolerance 25  //Within Line Tolerance
 
 void LineMove(int ReadSide, int DesiredDistance, float Speed) {  //When Going Straight and Movement Adjust Doesnt work, look at the sensors perpendicular to our movement and move to fit within the distance
+  AdjustAngle(ReadSide);
   Read_Side(ReadSide);
   if (Side[ReadSide].AvgDist < DesiredDistance - LineMoveTolerance) {
     AdjustDistance(OutputDirection(ReadSide + 2), Speed);
+    Serial.println("Moving Further away from wall");
     delay(100);
   } else if (Side[ReadSide].AvgDist > DesiredDistance + LineMoveTolerance && Side[ReadSide].AvgDist < 700) {
+    Serial.println("Moving Closer to wall");
     AdjustDistance(ReadSide, Speed);
     delay(100);
   } else {
@@ -396,50 +431,68 @@ void LineMove(int ReadSide, int DesiredDistance, float Speed) {  //When Going St
   }
 }
 
-
+#define SideDifTolerance 20
+void AdjustAngle(int ReadSide) {
+  Read_Side(ReadSide);
+  if (Side[ReadSide].SideDif > SideDifTolerance) {  //Left - Right = Side dif    Left Side Further away from wall   Rotate CW
+    RotateCW(0.2);
+    delay(100);
+  } else if (Side[ReadSide].SideDif < -SideDifTolerance) {  //Left - Right = Side dif    Right Side Further away from wall   Rotate CCW
+    RotateCCW(0.2);
+    delay(100);
+  }
+}
 
 void CheckForWallCollisions() {
   Read_Side(Front);
   if (!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)) {
     MoveBackward(.2);
-    while (!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)) {
-      Read_Side(Front);
-      // read_single_sensor(Front_Left);   //May not need to remeasure if it does it already in the while loop
-      // read_single_sensor(Front_Right);  //how resource intensive is this? will re-reading take too long?
-    }
+    delay(250);
+    // while (!isSafeDistanceAway(Front_Left) || !isSafeDistanceAway(Front_Right)) {
+    //   Serial.println("Too close to front wall");
+    //   Read_Side(Front);
+    //   // read_single_sensor(Front_Left);   //May not need to remeasure if it does it already in the while loop
+    //   // read_single_sensor(Front_Right);  //how resource intensive is this? will re-reading take too long?
+    // }
     Stop();
   }
   Read_Side(Left);
   //if left sensors in range, move right until safe distance away
   if (!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)) {
     MoveRight(.2);
-    while (!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)) {
-      Read_Side(Left);
-      // read_single_sensor(Left_Front);  //May not need to remeasure if it does it already in the while loop
-      // read_single_sensor(Left_Back);   //how resource intensive is this? will re-reading take too long?
-    }
+    delay(250);
+    // while (!isSafeDistanceAway(Left_Front) || !isSafeDistanceAway(Left_Back)) {
+    //   Read_Side(Left);
+    //   Serial.println("Too close to Left wall");
+    //   // read_single_sensor(Left_Front);  //May not need to remeasure if it does it already in the while loop
+    //   // read_single_sensor(Left_Back);   //how resource intensive is this? will re-reading take too long?
+    // }
     Stop();
   }
   Read_Side(Right);
   //if right sensors in range, move left until safe distance away
   if (!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)) {
     MoveLeft(.2);
-    while (!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)) {
-      Read_Side(Right);
-      // read_single_sensor(Right_Front);  //May not need to remeasure if it does it already in the while loop
-      // read_single_sensor(Right_Back);   //how resource intensive is this? will re-reading take too long?
-    }
+    delay(250);
+    // while (!isSafeDistanceAway(Right_Front) || !isSafeDistanceAway(Right_Back)) {
+    //   Read_Side(Right);
+    //   Serial.println("Too close to Right wall");
+    //   // read_single_sensor(Right_Front);  //May not need to remeasure if it does it already in the while loop
+    //   // read_single_sensor(Right_Back);   //how resource intensive is this? will re-reading take too long?
+    // }
     Stop();
   }
   Read_Side(Back);
   //if back sensors in range, move forward until safe distance away
   if (!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)) {
     MoveForward(.2);
-    while (!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)) {
-      Read_Side(Back);
-      // read_single_sensor(Back_Left);   //May not need to remeasure if it does it already in the while loop
-      // read_single_sensor(Back_Right);  //how resource intensive is this? will re-reading take too long?
-    }
+    delay(250);
+    // while (!isSafeDistanceAway(Back_Left) || !isSafeDistanceAway(Back_Right)) {
+    //   Read_Side(Back);
+    //   Serial.println("Too close to Back wall");
+    //   // read_single_sensor(Back_Left);   //May not need to remeasure if it does it already in the while loop
+    //   // read_single_sensor(Back_Right);  //how resource intensive is this? will re-reading take too long?
+    // }
     Stop();
   }
 }
