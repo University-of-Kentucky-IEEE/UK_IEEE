@@ -47,11 +47,53 @@ void setup() {
   //(Optional)
 }
 
+
+void loop() {
+  while(1){
+    Movement_Adjust(Front, Left);
+    
+  }
+  
+  while (objective == setupTasks) {
+    SenseLight(A0);
+    //do LED stuff
+    //when done, set objective to setup
+  }
+
+  while (objective == sweepOuterField) {
+    CheckForMagnet();
+    // if state is done executing, move to the next one
+    if (LocationHelper(state)) {
+      Serial.print("State ");
+      Serial.println(state);
+      Serial.print(" Cleared Moving to State ");
+      Serial.println(state + 1);
+      state++;
+    }
+    if (state == 12) {
+      objective = pickUpBoxes;
+    }
+  }
+  while (objective == pickUpBoxes) {
+  }
+  while (objective == dropOffBlocks) {
+  }
+  while (objective == sweepCave) {
+  }
+  while (objective == dropOffBlocksFromCave) {
+  }
+  while (objective == beacon) {
+  }
+}
+
+
+/*
 void loop(){
   Read_Multi_Sensors();
   ReadClosestWall();
   DisplayReadings(1);
 }
+*/
 
 /*
 void loop() {
@@ -209,15 +251,18 @@ Stop();
 bool isSafeDistanceAway(int sensor) {
   //Read_Multi_Sensors();
   int Offset = 0;
-  
-  if (sensor == Front_Left || sensor == Front_Right){
-    Offset = 75;
+  read_single_sensor(sensor);
+  Serial.print("Sensor Value = ");
+  Serial.println(Sensor[sensor].Distance);
+
+  if (sensor == Front_Left || sensor == Front_Right) {
+    Offset = 50;
+    Serial.println("Offseting ");
   }
 
   if (Sensor[sensor].Distance < (safeDistanceAway + Offset)) {
+    Serial.print("Sensor Close OUtput false");
     return false;
   }
   return true;
 }
-
-

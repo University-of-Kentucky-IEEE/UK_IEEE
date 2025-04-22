@@ -341,8 +341,29 @@ bool LocationHelper(int state) {
       return false;
       break;
 
-
     case 4:
+    MoveForward(.5);
+    Read_Side(Back);
+    if (Side[Back].AvgDist >= 200){
+      Stop();
+      return true;
+    } 
+    return false;
+    break;
+
+    case 5: 
+    MoveLeft(.5);
+    Read_Side(Back);
+    Read_Side(Right);
+    if (Side[Right].AvgDist >= 350){
+      Stop();
+      return true;
+    }
+    return false; 
+    break;
+
+    
+    case 6:
       hasCaseStarted = true;
       inPosition = false;
       MoveForward(.5);
@@ -364,7 +385,7 @@ bool LocationHelper(int state) {
       return false;
       break;
 
-    case 5:  //WILL REQUIRE TIMED MOVEMENT
+    case 7:  //WILL REQUIRE TIMED MOVEMENT
       //are right sensors hitting a wall (& no others?)
       hasCaseStarted = true;
       MoveForward(.5);
@@ -383,7 +404,7 @@ bool LocationHelper(int state) {
 
       break;
 
-    case 6:  //Move Away from storage container
+    case 8:  //Move Away from storage container
       //is one (or maybe two) front sensors hitting nebulite box? Back one is
       inPosition = false;
       hasCaseStarted = true;
@@ -397,7 +418,7 @@ bool LocationHelper(int state) {
       return false;
       break;
 
-    case 7:  //Move To South Wall
+    case 9:  //Move To South Wall
 
       inPosition = false;
       hasCaseStarted = true;
@@ -421,7 +442,7 @@ bool LocationHelper(int state) {
       return false;
       break;
 
-    case 8:
+    case 10:
       //are one or more Front sensors hitting nebulite box?
       ///are front sensors hitting wall?
       inPosition = false;
@@ -445,7 +466,7 @@ bool LocationHelper(int state) {
       return false;
       break;
 
-    case 9:  //Move to top Wall
+    case 11:  //Move to top Wall
       //are front sensors hitting wall?
       inPosition = false;
       MoveForward(.5);
@@ -466,7 +487,7 @@ bool LocationHelper(int state) {
       break;
 
 
-    case 10:  // Move to Top Right Corner
+    case 12:  // Move to Top Right Corner
 
       inPosition = false;
       MoveForward(.5);
@@ -487,7 +508,7 @@ bool LocationHelper(int state) {
       break;
 
 
-    case 11:  //Move to Bottom Right Corner
+    case 13:  //Move to Bottom Right Corner
 
       inPosition = false;
       MoveForward(.5);
@@ -510,9 +531,9 @@ bool LocationHelper(int state) {
       break;
 
 
-    case 12:
+    case 14:
       inPosition = false;
-      Movement_Adjust("Forward");
+      
       Read_Multi_Sensors();
       if (!isSafeDistanceAway(Front_Right) || !isSafeDistanceAway(Front_Left)) {
         inPosition = true;
@@ -524,11 +545,11 @@ bool LocationHelper(int state) {
       }
       return false;
       break;
-    case 13:
+    case 15:
       //are front sensors hitting geodinium box?
       //are left sensors hitting wall?
       inPosition = false;
-      Movement_Adjust("Forward");
+      
       Read_Multi_Sensors();
       if (!isSafeDistanceAway(Front_Right) || !isSafeDistanceAway(Front_Left)) {
         inPosition = true;

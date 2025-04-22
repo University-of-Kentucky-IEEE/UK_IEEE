@@ -391,10 +391,10 @@ void CheckForTurn(int rotation) {
     Serial.print("DistanceDiffFronWall ");
     Serial.println(Side[ClosestWall].SideDif);
     //Side[ClosestWall].SideDif < 50 ||
-    if ((abs(PreviousSideDif) > abs(Side[ClosestWall].SideDif))) {  // stops turning if the dif is getting larger or if dif is small enough
+    if ((abs(PreviousSideDif) < abs(Side[ClosestWall].SideDif))) {  // stops turning if the dif is getting larger or if dif is small enough
       Serial.println("Fully Turned");
       Stop();
-      delay(2500);
+      delay(1000);
       InPosition = true;
     }
   }
