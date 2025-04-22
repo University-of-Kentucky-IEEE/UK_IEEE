@@ -342,23 +342,38 @@ bool LocationHelper(int state) {
       break;
 
     case 4:
+    inPosition = false; 
     MoveForward(.5);
     Read_Side(Back);
-    if (Side[Back].AvgDist >= 200){
+    if (Side[Back].AvgDist >= 200){ // Test the distance is correct
+      inPosition = true; 
+    } 
+    if (inPosition) {
       Stop();
       return true;
-    } 
+    }
     return false;
     break;
 
     case 5: 
+    inPosition = false; 
+    GrabShippingContainer(false)
     MoveLeft(.5);
     Read_Side(Back);
     Read_Side(Right);
-    if (Side[Right].AvgDist >= 350){
+    if (Side[Right].AvgDist >= 250){ // Test the distance is correct (could be 350)
+      inPosition = true;
+    }
+
+    if (inPosition) {
+      Stop();
+      GrabShippingContainer(true);
+      MoveForward(.5);
+      delay(250);
       Stop();
       return true;
     }
+    
     return false; 
     break;
 
