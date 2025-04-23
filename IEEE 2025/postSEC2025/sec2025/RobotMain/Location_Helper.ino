@@ -1,3 +1,5 @@
+#include "PsuedoFunctionsForStuff.ino"
+
 // I know this should go into its own ino file eventually
 bool inPosition = false;
 bool hasCaseStarted = false;
@@ -361,7 +363,8 @@ bool LocationHelper(int state) {
     MoveLeft(.5);
     Read_Side(Back);
     Read_Side(Right);
-    if (Side[Right].AvgDist >= 250){ // Test the distance is correct (could be 350)
+    if (Side[Right].AvgDist >= 400 || CheckShippingContainerPosition == ContainerInMiddle) { 
+      // Test the distance is correct (could be 350 or 250)
       inPosition = true;
     }
 
