@@ -126,3 +126,13 @@ int ClosestWall = South;
 #define safeDistanceAway 100
 //figure out the factor which converts angle degrees to delay time while rotating
 #define delayScalingFactor 19
+
+// For container functions
+#define ContainerOnRightSide 1
+#define ContainerOnLeftSide 2
+#define ContainerInMiddle 3
+#define ContainerMissing 4
+#define MinContainerDistance 150
+
+#define Magnetic 1
+#define NonMagnetic 0

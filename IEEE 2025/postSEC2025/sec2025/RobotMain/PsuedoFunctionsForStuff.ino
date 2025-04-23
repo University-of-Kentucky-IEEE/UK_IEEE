@@ -1,6 +1,7 @@
 //#include "RobotMain.ino"
 
 #include <Servo.h>
+#include "Global_Int.h"
 //ServoNames
 
 
@@ -148,14 +149,6 @@ void CheckForMagnet() {  //Checks for Magnetic Field
 //
 // Shipping container functions
 //
-#define ContainerOnRightSide 1
-#define ContainerOnLeftSide 2
-#define ContainerInMiddle 3
-#define ContainerMissing 4
-#define MinContainerDistance 150
-
-#define Magnetic 1
-#define NonMagnetic 0
 
 int CheckShippingContainerPosition() {  //checks where shipping container is located
   Read_Side(Back);
