@@ -40,6 +40,7 @@ The 2026 repository will grow throughout the season. Organize new folders as fol
 | `testing/` | Scripts and assets for desktop testing, ROS nodes, or kinematic models. |
 | `SEC/` | Folder for Southeast Con production code |
 | `docs/` | Additional documentation |
+| `examples/` | Reference sketches and snippets, starting with Arduino examples. |
 | `README.md` | Season overview and quick start guide (this file). |
 When you create a new area, add a `README.md` inside that directory describing its contents and how to build or run the code.
 ## Development Workflow
