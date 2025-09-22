@@ -2,7 +2,7 @@
 > Repository for the University of Kentucky IEEE Student Branch SoutheasternCon 2026 robotics project.
 ## Quick Links
 - [Team Notion Workspace](https://uky-ieee-student-branch.notion.site/University-of-Kentucky-IEEE-230e04d3af04805ca183c6dcd95bffa5?pvs=74)
-- [UK IEEE Student Branch GitHub](https://github.com/UK-IEEE)
+- [IEEE BBNvolved](https://uky.campuslabs.com/engage/organization/ieee)
 ## Table of Contents
 1. [Overview](#overview)
 2. [Season Goals](#season-goals)
@@ -36,10 +36,10 @@ The SoutheasternCon robotics competition challenges teams to design, build, and 
 The 2026 repository will grow throughout the season. Organize new folders as follows so everyone can navigate quickly:
 | Directory | Purpose |
 |-----------|---------|
-| `firmware/` | Microcontroller projects (PlatformIO, Arduino, or other embedded toolchains). |
-| `simulation/` | Scripts and assets for desktop testing, ROS nodes, or kinematic models. |
-| `hardware/` | CAD exports, wiring diagrams, and PCB design files. |
-| `docs/` | Additional markdown documentation, experiment logs, and meeting notes. |
+| `movement/` | Directory for the robot movement |
+| `testing/` | Scripts and assets for desktop testing, ROS nodes, or kinematic models. |
+| `SEC/` | Folder for Southeast Con production code |
+| `docs/` | Additional documentation |
 | `README.md` | Season overview and quick start guide (this file). |
 When you create a new area, add a `README.md` inside that directory describing its contents and how to build or run the code.
 ## Development Workflow
