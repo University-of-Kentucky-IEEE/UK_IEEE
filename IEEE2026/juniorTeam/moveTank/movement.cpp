@@ -3,32 +3,50 @@
 //
 //#include "../../Libraries/ArduinoCore-avr-master/cores/arduino/Arduino.h"
 //#include "../../Libraries/Stepper-master/src/Stepper.h"
+#include <Arduino.h>
 #include <Stepper.h>
+#include "pins.h"
 #include "movement.h"
 
 extern Stepper stepper1;
 extern Stepper stepper2;
 
-void moveForward(int steps) {
+void moveForward() {
     Serial.println("Forward");
-    stepper1.step(steps);
-    stepper2.step(-steps);
+    digitalWrite(input1, HIGH);
+    digitalWrite(input2, LOW);
+    digitalWrite(input3, HIGH);
+    digitalWrite(input4, LOW);
 }
 
-void moveBackward(int steps) {
+void moveBackward() {
     Serial.println("Backward");
-    stepper1.step(-steps);
-    stepper2.step(steps);
+    digitalWrite(input1, LOW);
+    digitalWrite(input2, HIGH);
+    digitalWrite(input3, LOW);
+    digitalWrite(input4, HIGH);
 }
 
-void turnLeft(int steps) {
+void turnLeft() {
     Serial.println("Left");
-    stepper1.step(steps);
-    stepper2.step(steps);
+    digitalWrite(input1, HIGH);
+    digitalWrite(input2, LOW);
+    digitalWrite(input3, LOW);
+    digitalWrite(input4, LOW);
 }
 
-void moveRight(int steps) {
+void moveRight() {
     Serial.println("Right");
-    stepper1.step(-steps);
-    stepper2.step(-steps);
+    digitalWrite(input1, LOW);
+    digitalWrite(input2, LOW);
+    digitalWrite(input3, HIGH);
+    digitalWrite(input4, LOW);
+}
+
+void stopMovement() {
+    Serial.println("Stop");
+    digitalWrite(input1, LOW);
+    digitalWrite(input2, LOW);
+    digitalWrite(input3, LOW);
+    digitalWrite(input4, LOW);
 }
