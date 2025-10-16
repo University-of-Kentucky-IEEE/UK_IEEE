@@ -12,7 +12,11 @@
 6. [Documentation Standards](#documentation-standards)
 7. [Resources](#resources)
 ## Overview
-The SoutheasternCon robotics competition challenges teams to design, build, and program an autonomous system that can accomplish a series of tasks within a constrained field. This repository houses the software, hardware design files, and supporting documentation for the University of Kentucky IEEE Student Branch 2025-26 competitive season.
+The SoutheasternCon robotics competition challenges teams to design, build, and
+program an autonomous system that can accomplish a series of tasks within a
+constrained field. This repository houses the software, hardware design files,
+and supporting documentation for the University of Kentucky IEEE Student Branch
+2025-26 competitive season.
 
 ## Season Goals
 - Deliver a reliable base robot platform capable of meeting the field requirements defined by the 2026 game manual.
@@ -23,6 +27,7 @@ The SoutheasternCon robotics competition challenges teams to design, build, and 
 1. **Clone the repository**
    ```bash
    git clone https://github.com/UK-IEEE/UK_IEEE.git
+   git submodule update --init --recursive
    cd UK_IEEE/IEEE2026
    ```
 2. **Review onboarding in Notion** – the Notion workspace contains equipment check-out procedures, coding standards, and season milestones.
