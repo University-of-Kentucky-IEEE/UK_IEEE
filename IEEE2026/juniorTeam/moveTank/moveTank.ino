@@ -1,11 +1,8 @@
-//#include "../../Libraries/ArduinoCore-avr-master/cores/arduino/Arduino.h"
-//#include "../../Libraries/Stepper-master/src/Stepper.h"
+#include <Arduino.h>
 #include <Stepper.h>
 #include "pins.h"
 #include "movement.h"
 const int stepsPerRevolution = 200;
-
-
 
 void setup() {
     Serial.begin(115200);
