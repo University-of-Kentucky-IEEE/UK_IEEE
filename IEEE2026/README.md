@@ -1,5 +1,5 @@
 # IEEE 2026 Robotics Team
-> Repository for the University of Kentucky IEEE Student Branch SoutheasternCon 2026 robotics project.
+> Repository for the University of Kentucky IEEE Student Branch SoutheastCon 2026 robotics project.
 ## Quick Links
 - [Team Notion Workspace](https://uky-ieee-student-branch.notion.site/University-of-Kentucky-IEEE-230e04d3af04805ca183c6dcd95bffa5?pvs=74)
 - [IEEE BBNvolved](https://uky.campuslabs.com/engage/organization/ieee)
