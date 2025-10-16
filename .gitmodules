@@ -1,0 +1,6 @@
+[submodule "IEEE2026/Libraries/ArduinoCore-avr"]
+	path = IEEE2026/Libraries/ArduinoCore-avr
+	url = https://github.com/arduino/ArduinoCore-avr
+[submodule "IEEE2026/Libraries/Stepper"]
+	path = IEEE2026/Libraries/Stepper
+	url = https://github.com/arduino-libraries/Stepper

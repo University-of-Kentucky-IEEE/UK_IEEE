@@ -1,8 +1,7 @@
 //
 // Created by Nathan Jones on 10/9/25.
 //
-//#include "../../Libraries/ArduinoCore-avr-master/cores/arduino/Arduino.h"
-//#include "../../Libraries/Stepper-master/src/Stepper.h"
+
 #include <Arduino.h>
 #include <Stepper.h>
 #include "pins.h"
