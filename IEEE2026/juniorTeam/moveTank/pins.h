@@ -7,8 +7,6 @@
 #ifndef IEEE2026_PINS_H
 #define IEEE2026_PINS_H
 
-#define BUILTIN_LED 13     // temp
-
 // Motor A  connections
 #define enableA 9
 #define input1 8

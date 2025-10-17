@@ -2,10 +2,9 @@
 #include <Stepper.h>
 #include "pins.h"
 #include "movement.h"
-const int stepsPerRevolution = 200;
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(9600);
     // Set pins as outputs
     pinMode(enableA, OUTPUT);
     pinMode(enableB, OUTPUT);
@@ -22,20 +21,19 @@ void setup() {
 }
 
 void loop() {
-    digitalWrite(enableA, HIGH);
-    digitalWrite(enableB, HIGH);
+    Serial.println(enableA);
 
-    moveForward();
-    delay(500);
+//    moveForward();
+//    delay(1000);
 
-    moveBackward();
-    delay(500);
+//    moveBackward();
+//    delay(1000);
 
-//    turnLeft();
-//    delay(500);
-//
-//    turnRight();
-//    delay(500);
+    turnLeft();
+    delay(1000);
+
+    turnRight();
+    delay(1000);
 
     stopMovement();
 }
