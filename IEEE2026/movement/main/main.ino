@@ -5,6 +5,7 @@
 #include "pins.h"
 #include "movement.h"
 
+Movement movement;
 
 void setup() {
     Serial.begin(9600);
@@ -35,24 +36,24 @@ void setup() {
 
 void loop() {
 
-    Movement::moveForward();
+    movement.moveForward();
     delay(1000);
 
-    Movement::moveBackward();
+    movement.moveBackward();
     delay(1000);
 
-    Movement::turnLeft();
+    movement.turnLeft();
     delay(1000);
 
-    Movement::turnRight();
+    movement.turnRight();
     delay(1000);
 
-    Movement::strafeRight();
+    movement.strafeLeft();
     delay(1000);
 
-    Movement::strafeLeft();
+    movement.strafeRight();
     delay(1000);
 
-    Movement::stopMovement();
+    movement.stopMovement();
     delay(5000);
 }
