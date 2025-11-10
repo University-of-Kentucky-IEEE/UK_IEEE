@@ -26,14 +26,14 @@ void loop() {
 //    moveForward();
 //    delay(1000);
 
-//    moveBackward();
-//    delay(1000);
+   moveBackward();
+   delay(1000);
 
-    turnLeft();
-    delay(1000);
+    // turnLeft();
+    // delay(1000);
 
-    turnRight();
-    delay(1000);
+    // turnRight();
+    // delay(1000);
 
     stopMovement();
 }
