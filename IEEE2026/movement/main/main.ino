@@ -37,21 +37,33 @@ void setup() {
 void loop() {
 
     movement.moveForward();
+    delay(2000);
+
     delay(1000);
 
     movement.moveBackward();
+    delay(2000);
+
     delay(1000);
 
     movement.turnLeft();
+    delay(2000);
+
     delay(1000);
 
     movement.turnRight();
+    delay(2000);
+
     delay(1000);
 
     movement.strafeLeft();
+    delay(2000);
+
     delay(1000);
 
     movement.strafeRight();
+    delay(2000);
+
     delay(1000);
 
     movement.stopMovement();
