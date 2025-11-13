@@ -6,8 +6,6 @@
 #include "pins.h"
 #include "movement.h"
 
-#include <ranges>
-
 void Movement::rotateFront(Direction direction) {
     digitalWrite(enableAF, HIGH);
     digitalWrite(enableBF, HIGH);
@@ -98,18 +96,24 @@ void Movement::rotateB(Direction direction) {
 }
 
 void Movement::moveForward() {
+    Movement::state = State::MOVE_FORWARD;
+
     Serial.println("Forward");
     rotateFront(FORWARD);
     rotateBack(FORWARD);
 }
 
 void Movement::moveBackward() {
+    Movement::state = State::MOVE_BACKWARD;
+
     Serial.println("Backward");
     rotateFront(BACKWARD);
     rotateBack(BACKWARD);
 }
 
 void Movement::turnLeft() {
+    Movement::state = State::TURN_LEFT;
+
     Serial.println("Turn Left");
     /*digitalWrite(enableA, HIGH);
     digitalWrite(enableB, HIGH);
@@ -123,6 +127,8 @@ void Movement::turnLeft() {
 }
 
 void Movement::turnRight() {
+    Movement::state = State::TURN_RIGHT;
+
     Serial.println("Turn Right");
     /*digitalWrite(enableA, HIGH);
     digitalWrite(enableB, HIGH);
@@ -136,6 +142,8 @@ void Movement::turnRight() {
 }
 
 void Movement::stopMovement() {
+    Movement::state = State::STOPPED;
+
     Serial.println("Stop");
     /*
     digitalWrite(enableAF, LOW);
@@ -160,7 +168,9 @@ void Movement::stopMovement() {
 }
 
 void Movement::strafeRight() {
-    Serial.println("Left");
+    Movement::state = State::MOVE_RIGHT;
+
+    Serial.println("Right");
     /*digitalWrite(enableAF, HIGH);
     digitalWrite(enableAB, HIGH);
     digitalWrite(enableBF, HIGH);
@@ -178,7 +188,9 @@ void Movement::strafeRight() {
 }
 
 void Movement::strafeLeft() {
-    Serial.println("Right");
+    Movement::state = State::MOVE_LEFT;
+
+    Serial.println("Left");
     /*digitalWrite(enableAF, HIGH);
     digitalWrite(enableAB, HIGH);
     digitalWrite(enableBF, HIGH);
@@ -193,5 +205,7 @@ void Movement::strafeLeft() {
     digitalWrite(input4B, LOW);*/
     rotateFront(BACKWARD);
     rotateBack(FORWARD);
-
 }
+
+Movement::State Movement::state = Movement::State::STOPPED;
+

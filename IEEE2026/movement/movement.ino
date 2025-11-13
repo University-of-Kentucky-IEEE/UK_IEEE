@@ -3,8 +3,6 @@
 
 #include "movement.h"
 #include "pins.h"
-#include "movement.h"
-
 
 void setup() {
     Serial.begin(9600);
