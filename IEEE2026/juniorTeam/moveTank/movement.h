@@ -9,6 +9,8 @@ void moveForward();
 void moveBackward();
 void turnLeft();
 void turnRight();
+void strafeLeft();
+void strafeRight();
 void stopMovement();
 
 #endif //IEEE2026_MOVEMENT_H

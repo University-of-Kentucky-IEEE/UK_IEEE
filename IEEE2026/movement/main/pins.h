@@ -41,8 +41,8 @@
 #define input2B 17 // AB Backward
 
 //Motor BB connections (Back Right)
-#define enableBB 16
+#define enableBB 14
 #define input3B 15 // BB Forward
-#define input4B 14 // BB Backward
+#define input4B 16 // BB Backward
 
 #endif //IEEE2026_PINS_H
