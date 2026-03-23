@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dpkg:*)",
+      "Bash(python3:*)",
+      "Bash(deepstream-app:*)",
+      "Bash(ls:*)",
+      "Bash(pip install:*)"
+    ]
+  }
+}
