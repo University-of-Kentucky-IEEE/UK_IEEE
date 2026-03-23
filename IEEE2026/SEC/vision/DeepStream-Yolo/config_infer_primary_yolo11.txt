@@ -1,0 +1,31 @@
+[property]
+gpu-id=0
+net-scale-factor=0.0039215697906911373
+model-color-format=0
+# Point to the specific engine you built
+model-engine-file=yolo26s.engine
+labelfile-path=labels.txt
+batch-size=1
+# Set to 2 for FP16 (matching your trtexec command)
+network-mode=2
+num-detected-classes=80
+interval=0
+gie-unique-id=1
+process-mode=1
+network-type=0
+cluster-mode=4
+maintain-aspect-ratio=1
+symmetric-padding=1
+# Force the scaling filter to be consistent
+scaling-filter=0
+# Explicit YOLO11 input dimensions
+infer-dims=3;640;640
+output-blob-names=output0
+parse-bbox-func-name=NvDsInferParseYoloCuda
+custom-lib-path=nvdsinfer_custom_impl_Yolo/libnvdsinfer_custom_impl_Yolo.so
+custom-network-config=yolo26s.onnx
+
+[class-attrs-all]
+nms-iou-threshold=0.45
+pre-cluster-threshold=0.25
+topk=300
